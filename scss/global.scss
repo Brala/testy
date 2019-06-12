@@ -1,12 +1,24 @@
 // Load Fonts
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
-body {
-	font-family: 'Roboto', sans-serif;
+// Global Variables
+$background: #f2f2f2;
+$white: #ffffff;
+$accent-blue: #65c1d4;
+$font-main: #000000;
+$font-form: #9b9b9b;
+
+// Global Mixins
+@mixin default-section {
+	background-color:$white;
+	margin: 30px auto;
+	padding: 20px;
+	width: 90%;
 }
 
-// Global Variables
-$black: #3d3d3d;
-$white: #ededed;
-$light-blue: #6fbfe8;
-$accent-orange: #d6751b;
+
+body {
+	font-family: 'Roboto', sans-serif;
+	color: $font-main;
+	background-color: $background;
+}

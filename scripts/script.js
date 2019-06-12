@@ -1,11 +1,15 @@
 const list = document.getElementById('list');
 const searchInput = document.getElementById('searchInput');
+const searchButton = document.getElementById('searchButton');
+const yearsSelector = document.getElementById('years');
+const tagsSelector = document.getElementById('tags');
+
 let globalData = "";
 let yearsList = [];
 let tagsList = [];
 
 
-//Wstępne ładowanie danych z JSON      
+//Wstępne ładowanie danych z JSON + generowanie szkieletu strony      
 function fetchData() {
 
     fetch('data.json')
@@ -13,36 +17,58 @@ function fetchData() {
             return resp.json();
         })
         .then(function(data) {
-        globalData = data;
+            data.map(raport => raport.date = new Date(raport.date))
+            globalData = data;
 
-        // setYears
-        data.forEach(element => {
-                const time = new Date(element.date);
-                const year = time.getFullYear(); 
+
+            // setYears
+            data.forEach(element => {
+                const year = element.date.getFullYear(); 
                 yearsList.push(year);
                 yearsList = [...new Set(yearsList)];
-                console.log(yearsList);     
-        })
-        function sortNumber(a, b) {
-            return a - b;
-        }
-        yearsList.sort(sortNumber)
-
-        // setTags
+            })
+            yearsList.sort((a, b) => a - b);
+            yearsSelector.innerHTML = 
+                yearsList.map(year => `<option onclick="alert(this)">${year}</option>`);
+            let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
+            filterByYear(globalData, strUser)
         
-        searchButton.addEventListener('click', filterData(globalData, searchInput.value, "title") );
+            
+            // setTags
+            data.forEach(element => {
+                const tag = element.category;
+                tagsList.push(tag);
+                tagsList = [...new Set(tagsList)];
+            })
+            tagsSelector.innerHTML = tagsList.map((tag, index) => `
+                <div class="formrow">
+                <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
+                <label class="checklabel" for="check${index}">${tag}</label>
+                </div>
+                `);
+            tagsList.map((tag, index) => {
+                const option = document.getElementById(`check${index}`);
+                option.addEventListener(
+                    'click', () => filterByTag(globalData, tag))
+            });           
         });
-
 }
 
 
 // Filtrowanie danych z JSONa
-function filterData(data,value,path){
-    // console.log(data)
-    const filteredData = data.filter(raport => raport[path].includes(value));
-
+function filterByYear(data,value){
+    const filteredData = data.filter(raport => raport.date.getFullYear() == value );
     renderData(filteredData)
 }
+function filterByTag(data,value){
+    const filteredData = data.filter(raport => raport.category === value );
+    renderData(filteredData)
+}
+function filterByChars(data,value){
+    const filteredData = data.filter(raport => raport.title.includes(value) || raport.description.includes(value));
+    renderData(filteredData)
+}
+
 
 
 // Renderowanie boxów z raportem
@@ -52,7 +78,7 @@ function renderData(data){
 
     data.forEach(element => {  
 
-        const time = new Date(element.date);
+        const time = element.date;
         const minutesHour = time.getHours() + ':' + time.getMinutes();
         const dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
         
@@ -61,10 +87,10 @@ function renderData(data){
         <li>Date: ${dayMonthYear}</li>
         <li>Hour: ${minutesHour}</li>
         <li>Category: ${element.category}</li>
-        <hr>
+
         <li>Title: ${element.title}</li>
         <li>Descr: ${element.description}</li>
-        </ul>
+        <hr>
         `;
     });
 
@@ -72,4 +98,5 @@ function renderData(data){
 }
 
 window.addEventListener('load', fetchData());
-// console.log(globalData)
+searchButton.addEventListener('click', () => filterByChars(globalData, searchInput.value));
+// yearsSelector.addEventListener('change', () => console.log(this.options[this.selectedIndex].text))

@@ -1,15 +1,24 @@
-header {
-	display: block;
-	width: 100vw;
-	min-height: 20px;
-	background-color: $light-blue;
-	position: fixed;
-	top: 0;
-	left: 0;
-	padding: 10px 15px;
 
-	a#logo {
-		color: $white;
-		font-weight: 1000;
+h1 {
+    text-align:center;
+    margin: 30px auto;
+    font-size: 36px;
+}
+
+header {
+	// display: block;
+	// width: 100vw;
+	// min-height: 20px;
+    @include default-section;
+
+    input[type=button]{
+        background-color: $accent-blue;
+    }
+    fieldset{
+        .formrow{
+            width: 140px;
+            float: left;
+        }
 	}
 }
+
