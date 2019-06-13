@@ -96,17 +96,18 @@ function renderData(data) {
         var minutesHour = time.getHours() + ':' + time.getMinutes();
         var dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
 
-        var renderManyFiles = function renderManyFiles(files) {
-            return files.map(function (file, index) {
-                return '<a href="">Pobierz ' + file.filename + '    ' + file.filesize + 'kb</a>';
-            });
-        };
+        var filesOutput = "";
+        element.files.forEach(function (file) {
+            return filesOutput += '<a>Pobierz ' + file.filename + '.pdf    (' + file.filesize + 'kB)</a>';
+        });
+        console.log(filesOutput);
 
-        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? '<a href="">Pobierz ' + element.files[0].filename + '    ' + element.files[0].filesize + 'kb</a>' : '<a>Pliki do pobrania(' + element.files.length + ')</a>' + renderManyFiles(element.files);
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? '<a>Pobierz ' + element.files[0].filename + '.pdf    (' + element.files[0].filesize + 'kB)</a>' : '<a>Pliki do pobrania(' + element.files.length + ')</a><hr>' + filesOutput;
 
-        output += '\n        <div class="block clear-fix">\n            <div class="raport-info f-left">\n                <p>' + dayMonthYear + '</p>\n                <p>' + minutesHour + '</p>\n                <p>' + element.category + '</p>\n            </div>\n            <div class="raport f-left">\n                <h2>' + element.title + '</h2>\n                <p>' + element.description + '</p>\n                <a href="" class="f-left">Zobacz raport</a>\n                ' + attachedFiles + '\n            </div>\n        </div>\n        ';
+        output += '\n        <div class="block clear-fix">\n            <div class="raport-info f-left">\n                <p>' + dayMonthYear + '</p>\n                <p>' + minutesHour + '</p>\n                <p>' + element.category + '</p>\n            </div>\n            <div class="raport f-left">\n                <h2>' + element.title + '</h2>\n                <p>' + element.description + '</p>\n                <div class="f-left">\n                    <a>Zobacz raport</a>\n                </div>\n                <div class="f-left">\n                    ' + attachedFiles + '\n                </div>\n            </div>\n        </div>\n        ';
+        console.log(output);
     });
-    list.innerHTML = output;
+    output === '' ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
 }
 
 window.addEventListener('load', fetchData());

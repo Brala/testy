@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Zadanie - Piotr Bralewski</title>
 	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -10,23 +10,15 @@
 	<h1>RAPORTY</h1>
 	<header>
 		<form action="...">
-			<select name="years" id="years">
-			</select>
-			<label for="site-search">Search:</label>
-			<input type="search" id="searchInput" value="elit" name="q"
-				aria-label="Search through site content">
-			<input type="button" id="searchButton"value="Search"></input>
-
-
-			<fieldset id="tags">
-			</fieldset>
+			<select name="years" id="years"></select>
+			<input type="search" id="searchInput" placeholder="Podaj nazwę, numer lub datę raportu" name="q" aria-label="Search through reports">
+			<input type="button" id="searchButton" value="Wyszukaj"></input>
+			<fieldset id="tags"></fieldset>
 		</form>
 	</header>
 
 	<main>
-		<div id="list">
-			Loading...
-		</div>
+		<div id="list">Ładowanie...</div>
 	</main>
 
 	<script type="text/javascript" src="scripts/scripts.min.js"></script>

@@ -89,12 +89,15 @@ function renderData(data){
         const minutesHour = time.getHours() + ':' + time.getMinutes();
         const dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
         
-        const renderManyFiles = (files) => files.map((file, index) =>`<a href="">Pobierz ${file.filename}    ${file.filesize}kb</a>`);
+        let filesOutput = "";
+        element.files.forEach(
+            file => filesOutput += `<a>Pobierz ${file.filename}.pdf    (${file.filesize}kB)</a>`);
+        console.log(filesOutput)
 
         const attachedFiles = 
         element.files.length === 0 ? ""
-        : element.files.length === 1 ? `<a href="">Pobierz ${element.files[0].filename}    ${element.files[0].filesize}kb</a>`
-        : `<a>Pliki do pobrania(${element.files.length})</a>${renderManyFiles(element.files)}`;
+        : element.files.length === 1 ? `<a>Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)</a>`
+        : `<a>Pliki do pobrania(${element.files.length})</a><hr>${filesOutput}`;
 
         output += `
         <div class="block clear-fix">
@@ -106,13 +109,20 @@ function renderData(data){
             <div class="raport f-left">
                 <h2>${element.title}</h2>
                 <p>${element.description}</p>
-                <a href="" class="f-left">Zobacz raport</a>
-                ${attachedFiles}
+                <div class="f-left">
+                    <a>Zobacz raport</a>
+                </div>
+                <div class="f-left">
+                    ${attachedFiles}
+                </div>
             </div>
         </div>
         `;
+        console.log(output)
     });
-    list.innerHTML = output;
+    output === ''
+    ? list.innerHTML = "Brak wyników spełniających kryteria" 
+    : list.innerHTML = output;
 }
 
 window.addEventListener('load', fetchData());

@@ -3,6 +3,7 @@ main {
 	@include default-section;
 	
 	.block {
+		padding: 15px 0;
 		&:not(:last-child){
 			border-bottom: 1px solid black;
 		}
@@ -13,11 +14,11 @@ main {
 	
 		.raport{
 			width: 80%;
+
+			a{
+				display: block;
+			}
 		}
-	
-
-
 	}
-
 }
 
