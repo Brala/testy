@@ -89,16 +89,25 @@ function renderData(data){
         const minutesHour = time.getHours() + ':' + time.getMinutes();
         const dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
         
+        const renderManyFiles = (files) => files.map((file, index) =>`<a href="">Pobierz ${file.filename}    ${file.filesize}kb</a>`);
+
+        const attachedFiles = 
+        element.files.length === 0 ? ""
+        : element.files.length === 1 ? `<a href="">Pobierz ${element.files[0].filename}    ${element.files[0].filesize}kb</a>`
+        : `<a>Pliki do pobrania(${element.files.length})</a>${renderManyFiles(element.files)}`;
+
         output += `
         <div class="block clear-fix">
             <div class="raport-info f-left">
-                <p>Date: ${dayMonthYear}</p>
-                <p>Hour: ${minutesHour}</p>
-                <p>Category: ${element.category}</p>
+                <p>${dayMonthYear}</p>
+                <p>${minutesHour}</p>
+                <p>${element.category}</p>
             </div>
             <div class="raport f-left">
-                <h2>Title: ${element.title}</h2>
-                <p>Descr: ${element.description}</p>
+                <h2>${element.title}</h2>
+                <p>${element.description}</p>
+                <a href="" class="f-left">Zobacz raport</a>
+                ${attachedFiles}
             </div>
         </div>
         `;

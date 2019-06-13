@@ -96,7 +96,15 @@ function renderData(data) {
         var minutesHour = time.getHours() + ':' + time.getMinutes();
         var dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
 
-        output += '\n        <div class="block clear-fix">\n            <div class="raport-info f-left">\n                <p>Date: ' + dayMonthYear + '</p>\n                <p>Hour: ' + minutesHour + '</p>\n                <p>Category: ' + element.category + '</p>\n            </div>\n            <div class="raport f-left">\n                <h2>Title: ' + element.title + '</h2>\n                <p>Descr: ' + element.description + '</p>\n            </div>\n        </div>\n        ';
+        var renderManyFiles = function renderManyFiles(files) {
+            return files.map(function (file, index) {
+                return '<a href="">Pobierz ' + file.filename + '    ' + file.filesize + 'kb</a>';
+            });
+        };
+
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? '<a href="">Pobierz ' + element.files[0].filename + '    ' + element.files[0].filesize + 'kb</a>' : '<a>Pliki do pobrania(' + element.files.length + ')</a>' + renderManyFiles(element.files);
+
+        output += '\n        <div class="block clear-fix">\n            <div class="raport-info f-left">\n                <p>' + dayMonthYear + '</p>\n                <p>' + minutesHour + '</p>\n                <p>' + element.category + '</p>\n            </div>\n            <div class="raport f-left">\n                <h2>' + element.title + '</h2>\n                <p>' + element.description + '</p>\n                <a href="" class="f-left">Zobacz raport</a>\n                ' + attachedFiles + '\n            </div>\n        </div>\n        ';
     });
     list.innerHTML = output;
 }
