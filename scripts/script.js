@@ -45,11 +45,11 @@ function fetchData() {
                 <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
                 <label class="checklabel" for="check${index}">${tag}</label>
                 </div>
-                `);
+                `
+            );               
             tagsList.map((tag, index) => {
                 const option = document.getElementById(`check${index}`);
-                option.addEventListener(
-                    'click', () => filterByTag(globalData, tag))
+                option.addEventListener('click', () => filterByTag(globalData));
             });           
         });
 }
@@ -58,15 +58,18 @@ function fetchData() {
 // Filtrowanie danych z JSONa
 function filterByYear(data,value){
     const filteredData = data.filter(raport => raport.date.getFullYear() == value );
-    renderData(filteredData)
+    renderData(filteredData);
 }
+
 function filterByTag(data,value){
-    const filteredData = data.filter(raport => raport.category === value );
-    renderData(filteredData)
+    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
+    const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);
+    renderData(filteredData);
 }
+
 function filterByChars(data,value){
     const filteredData = data.filter(raport => raport.title.includes(value) || raport.description.includes(value));
-    renderData(filteredData)
+    renderData(filteredData);
 }
 
 
@@ -90,13 +93,12 @@ function renderData(data){
 
         <li>Title: ${element.title}</li>
         <li>Descr: ${element.description}</li>
-        <hr>
+        </ul>
         `;
     });
-
     list.innerHTML = output;
 }
 
 window.addEventListener('load', fetchData());
 searchButton.addEventListener('click', () => filterByChars(globalData, searchInput.value));
-// yearsSelector.addEventListener('change', () => console.log(this.options[this.selectedIndex].text))
+yearsSelector.addEventListener('change', () => console.log(this.options[this.selectedIndex].text))

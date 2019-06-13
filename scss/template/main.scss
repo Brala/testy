@@ -2,14 +2,14 @@ main {
 	// margin: 80px auto 0 auto;
 	@include default-section;
 
-	fieldset{
-		display: flex;
-	}
-}
+	ul {
+		// background-color:$white;
+		// margin: 0px auto;
+		// padding: 20px;
+		}
 
-ul {
-// background-color:$white;
-// margin: 0px auto;
-// padding: 20px;
+	ul:not(:last-child){
+		border-bottom: 1px solid black;
+	}
 }
 

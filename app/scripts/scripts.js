@@ -50,7 +50,7 @@ function fetchData() {
         tagsList.map(function (tag, index) {
             var option = document.getElementById('check' + index);
             option.addEventListener('click', function () {
-                return filterByTag(globalData, tag);
+                return filterByTag(globalData);
             });
         });
     });
@@ -63,12 +63,17 @@ function filterByYear(data, value) {
     });
     renderData(filteredData);
 }
+
 function filterByTag(data, value) {
+    var tagsSelected = tagsList.filter(function (tag, index) {
+        return document.getElementById('check' + index).checked ? tag : null;
+    });
     var filteredData = data.filter(function (raport) {
-        return raport.category === value;
+        return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
     });
     renderData(filteredData);
 }
+
 function filterByChars(data, value) {
     var filteredData = data.filter(function (raport) {
         return raport.title.includes(value) || raport.description.includes(value);
@@ -87,9 +92,8 @@ function renderData(data) {
         var minutesHour = time.getHours() + ':' + time.getMinutes();
         var dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
 
-        output += '\n        <ul>\n        <li>Date: ' + dayMonthYear + '</li>\n        <li>Hour: ' + minutesHour + '</li>\n        <li>Category: ' + element.category + '</li>\n\n        <li>Title: ' + element.title + '</li>\n        <li>Descr: ' + element.description + '</li>\n        <hr>\n        ';
+        output += '\n        <ul>\n        <li>Date: ' + dayMonthYear + '</li>\n        <li>Hour: ' + minutesHour + '</li>\n        <li>Category: ' + element.category + '</li>\n\n        <li>Title: ' + element.title + '</li>\n        <li>Descr: ' + element.description + '</li>\n        </ul>\n        ';
     });
-
     list.innerHTML = output;
 }
 
@@ -97,4 +101,6 @@ window.addEventListener('load', fetchData());
 searchButton.addEventListener('click', function () {
     return filterByChars(globalData, searchInput.value);
 });
-// yearsSelector.addEventListener('change', () => console.log(this.options[this.selectedIndex].text))
+yearsSelector.addEventListener('change', function () {
+    return console.log(undefined.options[undefined.selectedIndex].text);
+});
