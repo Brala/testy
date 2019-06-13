@@ -35,6 +35,7 @@ function fetchData() {
         yearsSelector.innerHTML = yearsList.map(function (year) {
             return '<option>' + year + '</option>';
         });
+        yearsSelector.selectedIndex = yearsSelector.options.length - 1;
         var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
         filterByYear(globalData, strUser);
 
@@ -95,7 +96,7 @@ function renderData(data) {
         var minutesHour = time.getHours() + ':' + time.getMinutes();
         var dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
 
-        output += '\n        <ul>\n        <li>Date: ' + dayMonthYear + '</li>\n        <li>Hour: ' + minutesHour + '</li>\n        <li>Category: ' + element.category + '</li>\n\n        <li>Title: ' + element.title + '</li>\n        <li>Descr: ' + element.description + '</li>\n        </ul>\n        ';
+        output += '\n        <div class="block clear-fix">\n            <div class="raport-info f-left">\n                <p>Date: ' + dayMonthYear + '</p>\n                <p>Hour: ' + minutesHour + '</p>\n                <p>Category: ' + element.category + '</p>\n            </div>\n            <div class="raport f-left">\n                <h2>Title: ' + element.title + '</h2>\n                <p>Descr: ' + element.description + '</p>\n            </div>\n        </div>\n        ';
     });
     list.innerHTML = output;
 }

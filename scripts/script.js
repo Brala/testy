@@ -30,6 +30,7 @@ function fetchData() {
             yearsList.sort((a, b) => a - b);
             yearsSelector.innerHTML = 
                 yearsList.map(year => `<option>${year}</option>`);
+            yearsSelector.selectedIndex = yearsSelector.options.length-1;
             let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
             filterByYear(globalData, strUser)
         
@@ -89,14 +90,17 @@ function renderData(data){
         const dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
         
         output += `
-        <ul>
-        <li>Date: ${dayMonthYear}</li>
-        <li>Hour: ${minutesHour}</li>
-        <li>Category: ${element.category}</li>
-
-        <li>Title: ${element.title}</li>
-        <li>Descr: ${element.description}</li>
-        </ul>
+        <div class="block clear-fix">
+            <div class="raport-info f-left">
+                <p>Date: ${dayMonthYear}</p>
+                <p>Hour: ${minutesHour}</p>
+                <p>Category: ${element.category}</p>
+            </div>
+            <div class="raport f-left">
+                <h2>Title: ${element.title}</h2>
+                <p>Descr: ${element.description}</p>
+            </div>
+        </div>
         `;
     });
     list.innerHTML = output;
@@ -104,4 +108,4 @@ function renderData(data){
 
 window.addEventListener('load', fetchData());
 searchButton.addEventListener('click', () => filterByChars(globalData, searchInput.value));
-yearsSelector.addEventListener('change', () => filterByYear(globalData,yearsSelector.value))
+yearsSelector.addEventListener('change', () => filterByYear(globalData, yearsSelector.value))
