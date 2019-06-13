@@ -33,7 +33,7 @@ function fetchData() {
             return a - b;
         });
         yearsSelector.innerHTML = yearsList.map(function (year) {
-            return '<option onclick="alert(this)">' + year + '</option>';
+            return '<option>' + year + '</option>';
         });
         var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
         filterByYear(globalData, strUser);
@@ -44,9 +44,12 @@ function fetchData() {
             tagsList.push(tag);
             tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
         });
-        tagsSelector.innerHTML = tagsList.map(function (tag, index) {
-            return '\n                <div class="formrow">\n                <input class="checkbox" type="checkbox" name="check' + index + '" id="check' + index + '">\n                <label class="checklabel" for="check' + index + '">' + tag + '</label>\n                </div>\n                ';
+        var output = '';
+
+        tagsList.forEach(function (tag, index) {
+            return output += '\n                <div class="formrow">\n                <input class="checkbox" type="checkbox" name="check' + index + '" id="check' + index + '">\n                <label class="checklabel" for="check' + index + '">' + tag + '</label>\n                </div>\n                ';
         });
+        tagsSelector.innerHTML = output;
         tagsList.map(function (tag, index) {
             var option = document.getElementById('check' + index);
             option.addEventListener('click', function () {
@@ -102,5 +105,5 @@ searchButton.addEventListener('click', function () {
     return filterByChars(globalData, searchInput.value);
 });
 yearsSelector.addEventListener('change', function () {
-    return console.log(undefined.options[undefined.selectedIndex].text);
+    return filterByYear(globalData, yearsSelector.value);
 });

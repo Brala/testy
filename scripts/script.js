@@ -29,7 +29,7 @@ function fetchData() {
             })
             yearsList.sort((a, b) => a - b);
             yearsSelector.innerHTML = 
-                yearsList.map(year => `<option onclick="alert(this)">${year}</option>`);
+                yearsList.map(year => `<option>${year}</option>`);
             let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
             filterByYear(globalData, strUser)
         
@@ -40,13 +40,16 @@ function fetchData() {
                 tagsList.push(tag);
                 tagsList = [...new Set(tagsList)];
             })
-            tagsSelector.innerHTML = tagsList.map((tag, index) => `
+            let output = '';
+
+            tagsList.forEach((tag, index) => output += `
                 <div class="formrow">
                 <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
                 <label class="checklabel" for="check${index}">${tag}</label>
                 </div>
                 `
-            );               
+            );    
+            tagsSelector.innerHTML = output;           
             tagsList.map((tag, index) => {
                 const option = document.getElementById(`check${index}`);
                 option.addEventListener('click', () => filterByTag(globalData));
@@ -101,4 +104,4 @@ function renderData(data){
 
 window.addEventListener('load', fetchData());
 searchButton.addEventListener('click', () => filterByChars(globalData, searchInput.value));
-yearsSelector.addEventListener('change', () => console.log(this.options[this.selectedIndex].text))
+yearsSelector.addEventListener('change', () => filterByYear(globalData,yearsSelector.value))
