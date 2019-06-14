@@ -35,6 +35,9 @@ body {
 .f-left{
 	float: left;
 }
+.f-right{
+	float: right;
+}
 .clear-fix:after {
 	content: "";
 	display: table;
@@ -58,3 +61,8 @@ body {
 		}
 	}
 }
+
+
+
+// MARGIN-LEFT: -60px;
+// margin-right: 48px;

@@ -29,8 +29,10 @@ function fetchData() {
                 yearsList = [...new Set(yearsList)];
             })
             yearsList.sort((a, b) => a - b);
-            yearsSelector.innerHTML = 
-                yearsList.map(year => `<option>${year}</option>`);
+            const yearsArrow = '<i class="arrow arrow-down"></i> '
+            yearsSelector.innerHTML = yearsArrow
+            + yearsList.map(year => `<option>${year}</option>`);
+
             yearsSelector.selectedIndex = yearsSelector.options.length-1;
             let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
             filterByYear(globalData, strUser)

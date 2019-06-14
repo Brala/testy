@@ -10,9 +10,14 @@
 	<h1>RAPORTY</h1>
 	<header>
 		<form action="...">
-			<select name="years" class="years" id="years"></select>
-			<input type="search" class="searchInput" id="searchInput" placeholder="Podaj nazwę, numer lub datę raportu" name="q" aria-label="Search through reports">
-			<input type="button" class="searchButton" id="searchButton" value="Wyszukaj"></input>
+			<fieldset>
+				<select name="years" class="years" id="years"></select>
+				<i class="arrow arrow-down"></i>
+			</fieldset>
+			<fieldset class="f-right">
+				<input type="search" class="searchInput" id="searchInput" placeholder="Podaj nazwę, numer lub datę raportu" name="q" aria-label="Search through reports">
+				<input type="button" class="searchButton" id="searchButton" value="Wyszukaj"></input>
+			</fieldset>
 			<fieldset id="tags"></fieldset>
 		</form>
 	</header>

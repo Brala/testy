@@ -33,9 +33,11 @@ function fetchData() {
         yearsList.sort(function (a, b) {
             return a - b;
         });
-        yearsSelector.innerHTML = yearsList.map(function (year) {
+        var yearsArrow = '<i class="arrow arrow-down"></i> ';
+        yearsSelector.innerHTML = yearsArrow + yearsList.map(function (year) {
             return "<option>" + year + "</option>";
         });
+
         yearsSelector.selectedIndex = yearsSelector.options.length - 1;
         var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
         filterByYear(globalData, strUser);
