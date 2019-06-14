@@ -1,21 +1,21 @@
-'use strict';
+"use strict";
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var list = document.getElementById('list');
-var searchInput = document.getElementById('searchInput');
-var searchButton = document.getElementById('searchButton');
-var yearsSelector = document.getElementById('years');
-var tagsSelector = document.getElementById('tags');
+var list = document.getElementById("list");
+var searchInput = document.getElementById("searchInput");
+var searchButton = document.getElementById("searchButton");
+var yearsSelector = document.getElementById("years");
+var tagsSelector = document.getElementById("tags");
 
 var globalData = "";
 var yearsList = [];
 var tagsList = [];
 
-//Wstępne ładowanie danych z JSON + generowanie szkieletu strony      
+//Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy      
 function fetchData() {
 
-    fetch('data.json').then(function (resp) {
+    fetch("data.json").then(function (resp) {
         return resp.json();
     }).then(function (data) {
         data.map(function (raport) {
@@ -33,7 +33,7 @@ function fetchData() {
             return a - b;
         });
         yearsSelector.innerHTML = yearsList.map(function (year) {
-            return '<option>' + year + '</option>';
+            return "<option>" + year + "</option>";
         });
         yearsSelector.selectedIndex = yearsSelector.options.length - 1;
         var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
@@ -45,22 +45,22 @@ function fetchData() {
             tagsList.push(tag);
             tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
         });
-        var output = '';
+        var output = "";
 
         tagsList.forEach(function (tag, index) {
-            return output += '\n                <div class="formrow">\n                <input class="checkbox" type="checkbox" name="check' + index + '" id="check' + index + '">\n                <label class="checklabel" for="check' + index + '">' + tag + '</label>\n                </div>\n                ';
+            return output += "\n                <div class=\"formrow\">\n                <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "</label>\n                </div>\n                ";
         });
         tagsSelector.innerHTML = output;
         tagsList.map(function (tag, index) {
-            var option = document.getElementById('check' + index);
-            option.addEventListener('click', function () {
+            var option = document.getElementById("check" + index);
+            option.addEventListener("click", function () {
                 return filterByTag(globalData);
             });
         });
     });
 }
 
-// Filtrowanie danych z JSONa
+// Filtrowanie(Przeszukiwanie) danych z JSONa
 function filterByYear(data, value) {
     var filteredData = data.filter(function (raport) {
         return raport.date.getFullYear() == value;
@@ -70,7 +70,7 @@ function filterByYear(data, value) {
 
 function filterByTag(data, value) {
     var tagsSelected = tagsList.filter(function (tag, index) {
-        return document.getElementById('check' + index).checked ? tag : null;
+        return document.getElementById("check" + index).checked ? tag : null;
     });
     var filteredData = data.filter(function (raport) {
         return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
@@ -85,35 +85,50 @@ function filterByChars(data, value) {
     renderData(filteredData);
 }
 
-// Renderowanie boxów z raportem
+// Generowanie boxów z raportami w <main>
 function renderData(data) {
 
-    var output = '';
+    var output = "";
+    var filesToggleIndex = 0;
 
-    data.forEach(function (element) {
+    data.forEach(function (element, index) {
 
         var time = element.date;
-        var minutesHour = time.getHours() + ':' + time.getMinutes();
-        var dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
+        var minutesHour = time.getHours() + ":" + time.getMinutes();
+        var dayMonthYear = time.getDate() + "." + time.getMonth() + "." + time.getFullYear();
 
         var filesOutput = "";
+
         element.files.forEach(function (file) {
-            return filesOutput += '<a>Pobierz ' + file.filename + '.pdf    (' + file.filesize + 'kB)</a>';
+            return filesOutput += "\n                <a>\n                    Pobierz " + file.filename + ".pdf    (" + file.filesize + "kB)\n                </a>";
         });
-        console.log(filesOutput);
 
-        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? '<a>Pobierz ' + element.files[0].filename + '.pdf    (' + element.files[0].filesize + 'kB)</a>' : '<a>Pliki do pobrania(' + element.files.length + ')</a><hr>' + filesOutput;
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania(" + element.files.length + ")\n                </a>\n                <hr>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    " + filesOutput + "\n                </div>";
 
-        output += '\n        <div class="block clear-fix">\n            <div class="raport-info f-left">\n                <p>' + dayMonthYear + '</p>\n                <p>' + minutesHour + '</p>\n                <p>' + element.category + '</p>\n            </div>\n            <div class="raport f-left">\n                <h2>' + element.title + '</h2>\n                <p>' + element.description + '</p>\n                <div class="f-left">\n                    <a>Zobacz raport</a>\n                </div>\n                <div class="f-left">\n                    ' + attachedFiles + '\n                </div>\n            </div>\n        </div>\n        ';
-        console.log(output);
+        element.files.length >= 2 ? filesToggleIndex++ : null;
+
+        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"raport-info f-left\">\n                    <p>" + dayMonthYear + "</p>\n                    <p>" + minutesHour + "</p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"raport f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
     });
-    output === '' ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
+    // Renderowanie treści
+    output === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
+
+    // Dodawanie listenerów do "Pliki do pobrania"
+
+    var _loop = function _loop(i) {
+        document.getElementById("toggleFiles" + i).addEventListener("click", function () {
+            document.getElementById("visibleFiles" + i).classList.toggle("hidden");
+        });
+    };
+
+    for (var i = 0; i < filesToggleIndex; i++) {
+        _loop(i);
+    }
 }
 
-window.addEventListener('load', fetchData());
-searchButton.addEventListener('click', function () {
+window.addEventListener("load", fetchData());
+searchButton.addEventListener("click", function () {
     return filterByChars(globalData, searchInput.value);
 });
-yearsSelector.addEventListener('change', function () {
+yearsSelector.addEventListener("change", function () {
     return filterByYear(globalData, yearsSelector.value);
 });

@@ -1,18 +1,18 @@
-const list = document.getElementById('list');
-const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
-const yearsSelector = document.getElementById('years');
-const tagsSelector = document.getElementById('tags');
+const list = document.getElementById("list");
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const yearsSelector = document.getElementById("years");
+const tagsSelector = document.getElementById("tags");
 
 let globalData = "";
 let yearsList = [];
 let tagsList = [];
 
 
-//Wstępne ładowanie danych z JSON + generowanie szkieletu strony      
+//Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy      
 function fetchData() {
 
-    fetch('data.json')
+    fetch("data.json")
         .then(function(resp) {
             return resp.json();
         })
@@ -41,7 +41,7 @@ function fetchData() {
                 tagsList.push(tag);
                 tagsList = [...new Set(tagsList)];
             })
-            let output = '';
+            let output = "";
 
             tagsList.forEach((tag, index) => output += `
                 <div class="formrow">
@@ -53,13 +53,13 @@ function fetchData() {
             tagsSelector.innerHTML = output;           
             tagsList.map((tag, index) => {
                 const option = document.getElementById(`check${index}`);
-                option.addEventListener('click', () => filterByTag(globalData));
+                option.addEventListener("click", () => filterByTag(globalData));
             });           
         });
 }
 
 
-// Filtrowanie danych z JSONa
+// Filtrowanie(Przeszukiwanie) danych z JSONa
 function filterByYear(data,value){
     const filteredData = data.filter(raport => raport.date.getFullYear() == value );
     renderData(filteredData);
@@ -78,53 +78,78 @@ function filterByChars(data,value){
 
 
 
-// Renderowanie boxów z raportem
+// Generowanie boxów z raportami w <main>
 function renderData(data){
 
-    let output = '';
+    let output = "";
+    let filesToggleIndex = 0;
 
-    data.forEach(element => {  
+    data.forEach((element, index) => {  
 
         const time = element.date;
-        const minutesHour = time.getHours() + ':' + time.getMinutes();
-        const dayMonthYear = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear();
+        const minutesHour = time.getHours() + ":" + time.getMinutes();
+        const dayMonthYear = time.getDate() + "." + time.getMonth() + "." + time.getFullYear();
         
         let filesOutput = "";
+
         element.files.forEach(
-            file => filesOutput += `<a>Pobierz ${file.filename}.pdf    (${file.filesize}kB)</a>`);
-        console.log(filesOutput)
+            file => filesOutput += `
+                <a>
+                    Pobierz ${file.filename}.pdf    (${file.filesize}kB)
+                </a>`
+        );
 
         const attachedFiles = 
-        element.files.length === 0 ? ""
-        : element.files.length === 1 ? `<a>Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)</a>`
-        : `<a>Pliki do pobrania(${element.files.length})</a><hr>${filesOutput}`;
+            element.files.length === 0 
+            ? ""
+            : element.files.length === 1 
+            ? ` <a>
+                    Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
+                </a>`
+            : ` <a id="toggleFiles${filesToggleIndex}"}>
+                    Pliki do pobrania(${element.files.length})
+                </a>
+                <hr>
+                <div class="hidden" id="visibleFiles${filesToggleIndex}">
+                    ${filesOutput}
+                </div>`;
+        
+        element.files.length >= 2 ? filesToggleIndex++ : null;
+
 
         output += `
-        <div class="block clear-fix">
-            <div class="raport-info f-left">
-                <p>${dayMonthYear}</p>
-                <p>${minutesHour}</p>
-                <p>${element.category}</p>
-            </div>
-            <div class="raport f-left">
-                <h2>${element.title}</h2>
-                <p>${element.description}</p>
-                <div class="f-left">
-                    <a>Zobacz raport</a>
+            <div class="block clear-fix">
+                <div class="raport-info f-left">
+                    <p>${dayMonthYear}</p>
+                    <p>${minutesHour}</p>
+                    <p>${element.category}</p>
                 </div>
-                <div class="f-left">
-                    ${attachedFiles}
+                <div class="raport f-left">
+                    <h2>${element.title}</h2>
+                    <p>${element.description}</p>
+                    <div class="f-left">
+                        <a>Zobacz raport</a>
+                    </div>
+                    <div class="f-left">
+                        ${attachedFiles}
+                    </div>
                 </div>
             </div>
-        </div>
         `;
-        console.log(output)
     });
-    output === ''
+    // Renderowanie treści
+    output === ""
     ? list.innerHTML = "Brak wyników spełniających kryteria" 
     : list.innerHTML = output;
+
+    // Dodawanie listenerów do "Pliki do pobrania"
+    for( let i=0 ; i<filesToggleIndex ; i++ ){
+        document.getElementById(`toggleFiles${i}`).addEventListener("click", () => {
+            document.getElementById(`visibleFiles${i}`).classList.toggle("hidden")
+        });
+    }
 }
 
-window.addEventListener('load', fetchData());
-searchButton.addEventListener('click', () => filterByChars(globalData, searchInput.value));
-yearsSelector.addEventListener('change', () => filterByYear(globalData, yearsSelector.value))
+window.addEventListener("load", fetchData());
+searchButton.addEventListener("click", () => filterByChars(globalData, searchInput.value));
+yearsSelector.addEventListener("change", () => filterByYear(globalData, yearsSelector.value))
