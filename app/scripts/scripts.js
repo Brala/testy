@@ -46,12 +46,17 @@ function fetchData() {
             tagsList.push(tag);
             tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
         });
-        var output = "";
+
+        var output = "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\">\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie</label>\n                </div>\n            ";
 
         tagsList.forEach(function (tag, index) {
             return output += "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "</label>\n                </div>\n                ";
         });
         tagsSelector.innerHTML = output;
+        //Add listeners to all tags
+        document.getElementById("checkAll").addEventListener("click", function () {
+            return filterByTag(globalData);
+        });
         tagsList.map(function (tag, index) {
             var option = document.getElementById("check" + index);
             option.addEventListener("click", function () {
@@ -76,7 +81,7 @@ function filterByTag(data, value) {
     var filteredData = data.filter(function (raport) {
         return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
     });
-    renderData(filteredData);
+    document.getElementById("checkAll").checked ? renderData(globalData) : renderData(filteredData);
 }
 
 function filterByChars(data, value) {
@@ -108,7 +113,7 @@ function renderData(data) {
 
         element.files.length >= 2 ? filesToggleIndex++ : null;
 
-        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"raport-info f-left\">\n                    <p>" + dayMonthYear + "</p>\n                    <p>" + minutesHour + "</p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"raport f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
+        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"date-category f-left\">\n                    <p>" + dayMonthYear + "</p>\n                    <p>" + minutesHour + "</p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"title-description-files f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
     });
     // Renderowanie treści
     output === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;

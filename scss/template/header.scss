@@ -29,9 +29,10 @@ header {
         border-radius: 19px;
         // position: absolute;
     }
-    
+
     fieldset{
-		// display: flex;
+        margin: 30px 0 5px;
+        // display: flex;
         .formrow{
             float: left;
 
@@ -52,7 +53,7 @@ header {
             }
 
             input[type=checkbox]:checked ~ label {
-                background: $font-form;
+                background:  $accent-blue;
             }
 
             input[type=checkbox]:checked ~ label:after {
@@ -61,6 +62,6 @@ header {
                 right: 3px;
             }
         }
-	}
+    }
 }
 

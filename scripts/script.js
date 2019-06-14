@@ -42,7 +42,13 @@ function fetchData() {
                 tagsList.push(tag);
                 tagsList = [...new Set(tagsList)];
             })
-            let output = "";
+
+            let output = `
+                <div class="formrow">
+                    <input class="checkbox" type="checkbox" name="checkAll" id="checkAll">
+                    <label class="checklabel" for="checkAll">Wszystkie</label>
+                </div>
+            `;
 
             tagsList.forEach((tag, index) => output += `
                 <div class="formrow">
@@ -51,7 +57,9 @@ function fetchData() {
                 </div>
                 `
             );    
-            tagsSelector.innerHTML = output;           
+            tagsSelector.innerHTML = output;
+            //Add listeners to all tags
+            document.getElementById(`checkAll`).addEventListener("click", () => filterByTag(globalData));
             tagsList.map((tag, index) => {
                 const option = document.getElementById(`check${index}`);
                 option.addEventListener("click", () => filterByTag(globalData));
@@ -68,8 +76,10 @@ function filterByYear(data,value){
 
 function filterByTag(data,value){
     const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
-    const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);
-    renderData(filteredData);
+    const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);   
+    document.getElementById(`checkAll`).checked 
+    ? renderData(globalData)
+    : renderData(filteredData);
 }
 
 function filterByChars(data,value){
@@ -120,12 +130,12 @@ function renderData(data){
 
         output += `
             <div class="block clear-fix">
-                <div class="raport-info f-left">
+                <div class="date-category f-left">
                     <p>${dayMonthYear}</p>
                     <p>${minutesHour}</p>
                     <p>${element.category}</p>
                 </div>
-                <div class="raport f-left">
+                <div class="title-description-files f-left">
                     <h2>${element.title}</h2>
                     <p>${element.description}</p>
                     <div class="f-left">

@@ -8,16 +8,17 @@ main {
 			border-bottom: 1px solid #9b9b9b;
 		}
 		
-		.raport-info{
+		.date-category{
 			width: 20%;
 		}
 	
-		.raport{
+		.title-description-files{
 			width: 80%;
 
 			a{
 				display: block;
-				color: $accent-blue
+				color: $accent-blue;
+				cursor: pointer;
 			}
 		}
 	}
