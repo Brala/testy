@@ -5,7 +5,7 @@ main {
 	.block {
 		padding: 15px 0;
 		&:not(:last-child){
-			border-bottom: 1px solid black;
+			border-bottom: 1px solid #9b9b9b;
 		}
 		
 		.raport-info{
@@ -17,6 +17,7 @@ main {
 
 			a{
 				display: block;
+				color: $accent-blue
 			}
 		}
 	}

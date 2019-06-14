@@ -8,10 +8,26 @@ h1 {
 header {
 
     @include default-section;
+    
+    .years{
+        @include filter-inputs;
+        width: 20%;
+        margin-right: 3%;
+    }
+    
+    input[type=search]{
+        @include filter-inputs;
+        width: 75%;
+    }
 
     input[type=button]{
         background-color: $accent-blue;
-        position: absolute;
+        color: $white;
+        margin-left: -140px;
+        border: none;
+        padding: 7px 20px;
+        border-radius: 19px;
+        // position: absolute;
     }
     
     fieldset{
@@ -20,7 +36,8 @@ header {
             width: 140px;
             float: left;
             margin: 10px;
-            background-color: $accent-blue;
+            border-radius: 10px;
+            border: 1px solid $font-form;
         }
 	}
 }

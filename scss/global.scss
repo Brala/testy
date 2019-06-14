@@ -16,6 +16,15 @@ $font-form: #9b9b9b;
 	width: 90%;
 }
 
+@mixin filter-inputs {	
+	border: none;  
+	height: 55px;
+	line-height: 55px;
+	padding: 0 15px;
+	border-bottom: 2px solid black;  
+	box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15)
+}
+
 
 body {
 	font-family: 'Roboto', sans-serif;
