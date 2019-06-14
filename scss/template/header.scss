@@ -3,6 +3,8 @@ h1 {
     text-align:center;
     margin: 30px auto;
     font-size: 36px;
+    letter-spacing: 6px;
+    font-weight: 300;
 }
 
 header {
@@ -43,23 +45,34 @@ header {
             }
 
             label{
-                text-align: center;
+                // text-align: center;
                 display: block;
                 width: 140px;
+                height: 28px;
+                line-height: 28px;
                 margin: 10px;
                 border-radius: 10px;
                 border: 1px solid $font-form;
-                position:relative;
+                padding-left: 10px;
+                color: $font-form;
+                position: relative;
             }
 
             input[type=checkbox]:checked ~ label {
-                background:  $accent-blue;
+                border-color: $accent-blue;
+                background-color: #eefcff;
+                color: $font-main;
+            }
+            
+            span{
+                opacity:0;
+                font-size: 13px;
             }
 
-            input[type=checkbox]:checked ~ label:after {
-                content: "x";
+            input[type=checkbox]:checked ~ label span {
+                opacity: 1;
                 position: absolute;
-                right: 3px;
+                right: 10px;
             }
         }
     }

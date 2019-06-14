@@ -8,18 +8,33 @@ main {
 			border-bottom: 1px solid #9b9b9b;
 		}
 		
-		.date-category{
+		.date-category {
 			width: 20%;
+
+			p:last-child {
+				margin-top:10px;
+			}
 		}
 	
-		.title-description-files{
+		.title-description-files {
 			width: 80%;
 
-			a{
+			> p {
+				margin: 10px 0;
+			}
+
+			a {
 				display: block;
 				color: $accent-blue;
+				font-size: 18px;
 				cursor: pointer;
+				position: relative;
 			}
+
+			.files{
+				margin-left: 20px;
+			}
+
 		}
 	}
 }

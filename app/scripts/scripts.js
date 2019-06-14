@@ -47,10 +47,10 @@ function fetchData() {
             tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
         });
 
-        var output = "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\">\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie</label>\n                </div>\n            ";
+        var output = "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\">\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n                </div>\n            ";
 
         tagsList.forEach(function (tag, index) {
-            return output += "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "</label>\n                </div>\n                ";
+            return output += "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "<span>&#x2716;</span></label>\n                </div>\n                ";
         });
         tagsSelector.innerHTML = output;
         //Add listeners to all tags
@@ -109,11 +109,11 @@ function renderData(data) {
             return filesOutput += "\n                <a>\n                    Pobierz " + file.filename + ".pdf    (" + file.filesize + "kB)\n                </a>";
         });
 
-        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania(" + element.files.length + ")     <i class=\"arrow arrow-down\"></i>\n                </a>\n                <hr>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    " + filesOutput + "\n                </div>";
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania(" + element.files.length + ")     <i class=\"arrow arrow-down\"></i>\n                </a>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    <hr>\n                    " + filesOutput + "\n                </div>";
 
         element.files.length >= 2 ? filesToggleIndex++ : null;
 
-        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"date-category f-left\">\n                    <p>" + dayMonthYear + "</p>\n                    <p>" + minutesHour + "</p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"title-description-files f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
+        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"date-category f-left\">\n                    <p><b>" + dayMonthYear + "</b></p>\n                    <p><b>" + minutesHour + "</b></p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"title-description-files f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"files f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
     });
     // Renderowanie treści
     output === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
@@ -123,6 +123,7 @@ function renderData(data) {
     var _loop = function _loop(i) {
         document.getElementById("toggleFiles" + i).addEventListener("click", function () {
             document.getElementById("visibleFiles" + i).classList.toggle("hidden");
+            document.querySelector("#toggleFiles" + i + " i").classList.toggle("arrow-up");
         });
     };
 

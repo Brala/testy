@@ -46,14 +46,14 @@ function fetchData() {
             let output = `
                 <div class="formrow">
                     <input class="checkbox" type="checkbox" name="checkAll" id="checkAll">
-                    <label class="checklabel" for="checkAll">Wszystkie</label>
+                    <label class="checklabel" for="checkAll">Wszystkie <span>&#x2716;</span></label>
                 </div>
             `;
 
             tagsList.forEach((tag, index) => output += `
                 <div class="formrow">
                     <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
-                    <label class="checklabel" for="check${index}">${tag}</label>
+                    <label class="checklabel" for="check${index}">${tag}<span>&#x2716;</span></label>
                 </div>
                 `
             );    
@@ -120,8 +120,8 @@ function renderData(data){
             : ` <a id="toggleFiles${filesToggleIndex}"}>
                     Pliki do pobrania(${element.files.length})     <i class="arrow arrow-down"></i>
                 </a>
-                <hr>
                 <div class="hidden" id="visibleFiles${filesToggleIndex}">
+                    <hr>
                     ${filesOutput}
                 </div>`;
         
@@ -131,8 +131,8 @@ function renderData(data){
         output += `
             <div class="block clear-fix">
                 <div class="date-category f-left">
-                    <p>${dayMonthYear}</p>
-                    <p>${minutesHour}</p>
+                    <p><b>${dayMonthYear}</b></p>
+                    <p><b>${minutesHour}</b></p>
                     <p>${element.category}</p>
                 </div>
                 <div class="title-description-files f-left">
@@ -141,7 +141,7 @@ function renderData(data){
                     <div class="f-left">
                         <a>Zobacz raport</a>
                     </div>
-                    <div class="f-left">
+                    <div class="files f-left">
                         ${attachedFiles}
                     </div>
                 </div>
@@ -156,7 +156,8 @@ function renderData(data){
     // Dodawanie click-listenerów do "Pliki do pobrania"
     for( let i=0 ; i<filesToggleIndex ; i++ ){
         document.getElementById(`toggleFiles${i}`).addEventListener("click", () => {
-            document.getElementById(`visibleFiles${i}`).classList.toggle("hidden")
+            document.getElementById(`visibleFiles${i}`).classList.toggle("hidden");
+            document.querySelector(`#toggleFiles${i} i`).classList.toggle("arrow-up");
         });
     }
 }
