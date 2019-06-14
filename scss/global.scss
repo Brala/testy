@@ -40,3 +40,22 @@ body {
 	display: table;
 	clear: both;
 }
+
+
+@mixin arrow {
+	border: solid $accent-blue;
+	border-width: 0 2px 2px 0;
+	display: inline-block;
+	padding: 5px;
+}
+.arrow-up {
+	@include arrow;
+	transform: rotate(-135deg);
+	-webkit-transform: rotate(-135deg);
+}
+
+.arrow-down {
+	@include arrow;
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+}

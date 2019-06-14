@@ -33,11 +33,33 @@ header {
     fieldset{
 		// display: flex;
         .formrow{
-            width: 140px;
             float: left;
-            margin: 10px;
-            border-radius: 10px;
-            border: 1px solid $font-form;
+
+            input[type=checkbox] {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            label{
+                text-align: center;
+                display: block;
+                width: 140px;
+                margin: 10px;
+                border-radius: 10px;
+                border: 1px solid $font-form;
+                position:relative;
+            }
+
+            input[type=checkbox]:checked ~ label {
+                background: $font-form;
+            }
+
+            input[type=checkbox]:checked ~ label:after {
+                content: "x";
+                position: absolute;
+                right: 3px;
+            }
         }
 	}
 }

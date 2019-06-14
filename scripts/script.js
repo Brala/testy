@@ -9,7 +9,7 @@ let yearsList = [];
 let tagsList = [];
 
 
-//Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy      
+// --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
 function fetchData() {
 
     fetch("data.json")
@@ -17,6 +17,7 @@ function fetchData() {
             return resp.json();
         })
         .then(function(data) {
+            // format unix_timestamp to js Date()
             data.map(raport => raport.date = new Date(raport.date))
             globalData = data;
 
@@ -45,8 +46,8 @@ function fetchData() {
 
             tagsList.forEach((tag, index) => output += `
                 <div class="formrow">
-                <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
-                <label class="checklabel" for="check${index}">${tag}</label>
+                    <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
+                    <label class="checklabel" for="check${index}">${tag}</label>
                 </div>
                 `
             );    
@@ -59,7 +60,7 @@ function fetchData() {
 }
 
 
-// Filtrowanie(Przeszukiwanie) danych z JSONa
+// ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
 function filterByYear(data,value){
     const filteredData = data.filter(raport => raport.date.getFullYear() == value );
     renderData(filteredData);
@@ -78,7 +79,7 @@ function filterByChars(data,value){
 
 
 
-// Generowanie boxów z raportami w <main>
+// ---------  Generowanie boxów z raportami w <main> --------- 
 function renderData(data){
 
     let output = "";
@@ -87,8 +88,8 @@ function renderData(data){
     data.forEach((element, index) => {  
 
         const time = element.date;
-        const minutesHour = time.getHours() + ":" + time.getMinutes();
-        const dayMonthYear = time.getDate() + "." + time.getMonth() + "." + time.getFullYear();
+        const minutesHour = ('0' + time.getHours()).slice(-2) + ":" + ('0' + time.getMinutes()).slice(-2);
+        const dayMonthYear = ('0' + time.getDate()).slice(-2) + "." + ('0' + time.getMonth()).slice(-2) + "." + time.getFullYear();
         
         let filesOutput = "";
 
@@ -107,7 +108,7 @@ function renderData(data){
                     Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
                 </a>`
             : ` <a id="toggleFiles${filesToggleIndex}"}>
-                    Pliki do pobrania(${element.files.length})
+                    Pliki do pobrania(${element.files.length})     <i class="arrow arrow-down"></i>
                 </a>
                 <hr>
                 <div class="hidden" id="visibleFiles${filesToggleIndex}">
@@ -142,7 +143,7 @@ function renderData(data){
     ? list.innerHTML = "Brak wyników spełniających kryteria" 
     : list.innerHTML = output;
 
-    // Dodawanie listenerów do "Pliki do pobrania"
+    // Dodawanie click-listenerów do "Pliki do pobrania"
     for( let i=0 ; i<filesToggleIndex ; i++ ){
         document.getElementById(`toggleFiles${i}`).addEventListener("click", () => {
             document.getElementById(`visibleFiles${i}`).classList.toggle("hidden")

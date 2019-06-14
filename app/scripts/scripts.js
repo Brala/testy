@@ -12,12 +12,13 @@ var globalData = "";
 var yearsList = [];
 var tagsList = [];
 
-//Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy      
+// --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
 function fetchData() {
 
     fetch("data.json").then(function (resp) {
         return resp.json();
     }).then(function (data) {
+        // format unix_timestamp to js Date()
         data.map(function (raport) {
             return raport.date = new Date(raport.date);
         });
@@ -48,7 +49,7 @@ function fetchData() {
         var output = "";
 
         tagsList.forEach(function (tag, index) {
-            return output += "\n                <div class=\"formrow\">\n                <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "</label>\n                </div>\n                ";
+            return output += "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "</label>\n                </div>\n                ";
         });
         tagsSelector.innerHTML = output;
         tagsList.map(function (tag, index) {
@@ -60,7 +61,7 @@ function fetchData() {
     });
 }
 
-// Filtrowanie(Przeszukiwanie) danych z JSONa
+// ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
 function filterByYear(data, value) {
     var filteredData = data.filter(function (raport) {
         return raport.date.getFullYear() == value;
@@ -85,7 +86,7 @@ function filterByChars(data, value) {
     renderData(filteredData);
 }
 
-// Generowanie boxów z raportami w <main>
+// ---------  Generowanie boxów z raportami w <main> --------- 
 function renderData(data) {
 
     var output = "";
@@ -94,8 +95,8 @@ function renderData(data) {
     data.forEach(function (element, index) {
 
         var time = element.date;
-        var minutesHour = time.getHours() + ":" + time.getMinutes();
-        var dayMonthYear = time.getDate() + "." + time.getMonth() + "." + time.getFullYear();
+        var minutesHour = ('0' + time.getHours()).slice(-2) + ":" + ('0' + time.getMinutes()).slice(-2);
+        var dayMonthYear = ('0' + time.getDate()).slice(-2) + "." + ('0' + time.getMonth()).slice(-2) + "." + time.getFullYear();
 
         var filesOutput = "";
 
@@ -103,7 +104,7 @@ function renderData(data) {
             return filesOutput += "\n                <a>\n                    Pobierz " + file.filename + ".pdf    (" + file.filesize + "kB)\n                </a>";
         });
 
-        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania(" + element.files.length + ")\n                </a>\n                <hr>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    " + filesOutput + "\n                </div>";
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania(" + element.files.length + ")     <i class=\"arrow arrow-down\"></i>\n                </a>\n                <hr>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    " + filesOutput + "\n                </div>";
 
         element.files.length >= 2 ? filesToggleIndex++ : null;
 
@@ -112,7 +113,7 @@ function renderData(data) {
     // Renderowanie treści
     output === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
 
-    // Dodawanie listenerów do "Pliki do pobrania"
+    // Dodawanie click-listenerów do "Pliki do pobrania"
 
     var _loop = function _loop(i) {
         document.getElementById("toggleFiles" + i).addEventListener("click", function () {
