@@ -3,7 +3,8 @@ main {
 	@include default-section;
 	
 	.block {
-		padding: 15px 0;
+		padding: 15px 26px;
+		
 		&:not(:last-child){
 			border-bottom: 1px solid #9b9b9b;
 		}
@@ -12,27 +13,38 @@ main {
 			width: 20%;
 
 			p:last-child {
-				margin-top:10px;
+				margin-top:20px;
 			}
 		}
 	
 		.title-description-files {
 			width: 80%;
 
+			h2{
+				font-size: 26px;
+
+			}
+
 			> p {
-				margin: 10px 0;
+				margin: 16px 0 20px;
 			}
 
 			a {
 				display: block;
+				position: relative;
+				margin-bottom: 17px;
 				color: $accent-blue;
 				font-size: 18px;
 				cursor: pointer;
-				position: relative;
+
 			}
 
 			.files{
-				margin-left: 20px;
+				margin-left: 22px;
+				
+				.toggle-files{
+					display: inline;					
+				}
 			}
 
 		}

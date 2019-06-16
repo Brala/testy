@@ -5,24 +5,24 @@
 $background: #f2f2f2;
 $white: #ffffff;
 $accent-blue: #65c1d4;
+$tag-checked: #f7fcfd;
 $font-main: #000000;
 $font-form: #9b9b9b;
 
 // Global Mixins
 @mixin default-section {
-	background-color:$white;
-	margin: 30px auto;
-	padding: 20px 40px;
-	width: 90%;
+	background-color: $white;
+	margin: 30px 65px;
+	padding: 55px 70px;
 }
 
 @mixin filter-inputs {	
+	height: 82px;
+	padding-left: 35px;
+	font-size: 24px;
 	border: none;  
-	height: 55px;
-	line-height: 55px;
-	padding: 0 15px;
 	border-bottom: 2px solid black;  
-	box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15)
+	box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.07)
 }
 
 
@@ -50,19 +50,16 @@ body {
 	border-width: 0 2px 2px 0;
 	display: inline-block;
 	padding: 5px;
+	
 	&.arrow-down {
 		transform: rotate(45deg);
 		position: absolute;
 		right: -24px;
 		top: 2px;
+
 		&.arrow-up {
 			transform: rotate(-135deg);
 			top: 9px;
 		}
 	}
 }
-
-
-
-// MARGIN-LEFT: -60px;
-// margin-right: 48px;

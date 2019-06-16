@@ -111,7 +111,7 @@ function renderData(data) {
             return filesOutput += "\n                <a>\n                    Pobierz " + file.filename + ".pdf    (" + file.filesize + "kB)\n                </a>";
         });
 
-        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania(" + element.files.length + ")     <i class=\"arrow arrow-down\"></i>\n                </a>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    <hr>\n                    " + filesOutput + "\n                </div>";
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a class=\"toggle-files\" id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania (" + element.files.length + ")     <i class=\"arrow arrow-down\"></i>\n                </a>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    <hr>\n                    " + filesOutput + "\n                </div>";
 
         element.files.length >= 2 ? filesToggleIndex++ : null;
 

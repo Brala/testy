@@ -28,8 +28,8 @@ header {
             }
 
             .arrow{
-                right: 45px;
-                top: 17px;
+                right: calc(20% + 19px);
+                top: 30px;
                 pointer-events: none;           
             }
         }
@@ -41,23 +41,29 @@ header {
             input[type=search]{
                 @include filter-inputs;
                 width: 100%;
+
+                &::placeholder{
+                    color: #9b9b9b
+                }
             }
         
             input[type=button]{
                 background-color: $accent-blue;
                 color: $white;
-                margin-left: -140px;
+                font-size: 16px;
+                line-height: 48px;
                 border: none;
-                padding: 7px 20px;
-                border-radius: 19px;
+                padding: 0 40px;
+                border-radius: 24px;
                 position: absolute;
-                right: 10px;
-                top: 9px;
+                right: 44px;
+                top: 18px;
             }
         }
         
         fieldset:nth-child(3){
             margin: 30px 0 5px;
+
             .formrow{
                 float: left;
     
@@ -70,19 +76,20 @@ header {
                 label{
                     display: block;
                     width: 140px;
-                    height: 28px;
-                    line-height: 28px;
-                    margin: 10px;
+                    height: 35px;
+                    line-height: 35px;
+                    margin-right: 16px;
                     border-radius: 10px;
                     border: 1px solid $font-form;
-                    padding-left: 10px;
+                    padding-left: 15px;
                     color: $font-form;
+                    font-size: 15px;
                     position: relative;
                 }
     
                 input[type=checkbox]:checked ~ label {
                     border-color: $accent-blue;
-                    background-color: #eefcff;
+                    background-color: $tag-checked;
                     color: $font-main;
                 }
                 
@@ -94,7 +101,7 @@ header {
                 input[type=checkbox]:checked ~ label span {
                     opacity: 1;
                     position: absolute;
-                    right: 10px;
+                    right: 15px;
                 }
             }
         }

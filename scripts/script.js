@@ -119,8 +119,8 @@ function renderData(data){
             ? ` <a>
                     Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
                 </a>`
-            : ` <a id="toggleFiles${filesToggleIndex}"}>
-                    Pliki do pobrania(${element.files.length})     <i class="arrow arrow-down"></i>
+            : ` <a class="toggle-files" id="toggleFiles${filesToggleIndex}"}>
+                    Pliki do pobrania (${element.files.length})     <i class="arrow arrow-down"></i>
                 </a>
                 <div class="hidden" id="visibleFiles${filesToggleIndex}">
                     <hr>
