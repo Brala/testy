@@ -12,14 +12,34 @@ main {
 		.date-category {
 			width: 20%;
 
-			p:last-child {
-				margin-top:20px;
+			@include respond-to('small') {
+				width: 100%;
+				}
+
+			p{
+				@include respond-to('small') {
+					display: inline-block;			
+				}
+				
+				&:last-child {
+					margin-top:20px;
+	
+					@include respond-to('small') {
+						float: right;
+						margin-top:0;
+						}
+				}
 			}
 		}
 	
 		.title-description-files {
 			width: 80%;
 
+			@include respond-to('small') {
+                width: 100%;
+                margin: 10px auto;
+			}
+				
 			h2{
 				font-size: 26px;
 
@@ -41,6 +61,11 @@ main {
 
 			.files{
 				margin-left: 22px;
+
+				@include respond-to('small') {
+					margin-left: 0;
+					width:100%;
+				}
 				
 				.toggle-files{
 					display: inline;					
