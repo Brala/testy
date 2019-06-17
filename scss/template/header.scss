@@ -15,12 +15,23 @@ header {
         fieldset:nth-child(1){
             width: 25%;
             display: inline-block;
-            position:relative;
+            position: relative;
+
+            @include respond-to('small') {
+                width: 40%;
+                display: block;
+                margin: 0 auto;
+                float: none;
+                }
 
             .years{
                 @include filter-inputs;
                 width: 80%;
                 appearance: none;
+
+                @include respond-to('small') {
+                    width: 100%;
+                    }
             }
 
             .years::-ms-expand {
@@ -41,6 +52,12 @@ header {
         fieldset:nth-child(2){
             width: 75%;
             position:relative;
+
+            @include respond-to('small') {
+                width: 90%;
+                margin: 10px auto;
+                float: none;
+                }
 
             input[type=search]{
                 @include filter-inputs;
@@ -66,7 +83,12 @@ header {
                 @include respond-to('large') {
                     right: 14px;
                     top: 7px;
-                  }
+                }
+                @include respond-to('small') {
+                    position: static;
+                    display: block;
+                    margin: 5px auto 0;
+                }
             }
         }
         
@@ -78,7 +100,7 @@ header {
                 flex-wrap: wrap;
 
                 @include respond-to('large') {
-                    justify-content: space-evenly;
+                    justify-content: center;
                   }
             }
 
