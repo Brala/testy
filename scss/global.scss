@@ -9,11 +9,36 @@ $tag-checked: #f7fcfd;
 $font-main: #000000;
 $font-form: #9b9b9b;
 
+// RWD Breakpoints
+$breakpoints: (
+  'small':  ( max-width:  767px ),
+  'medium': ( max-width:  992px ),
+  'large':  ( max-width: 1200px )
+) !default;
+@mixin respond-to($breakpoint) {
+	// If the key exists in the map
+	@if map-has-key($breakpoints, $breakpoint) {
+	  // Prints a media query based on the value
+	  @media #{inspect(map-get($breakpoints, $breakpoint))} {
+		@content;
+	  }
+	}  
+	// If the key doesn't exist in the map
+	@else {
+	  @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+		  + "Available breakpoints are: #{map-keys($breakpoints)}.";
+	}
+  }
+
 // Global Mixins
 @mixin default-section {
 	background-color: $white;
 	margin: 30px 65px;
 	padding: 55px 70px;
+
+	@include respond-to('large') {
+		margin: 30px 0;
+	  }
 }
 
 @mixin filter-inputs {	
@@ -22,7 +47,12 @@ $font-form: #9b9b9b;
 	font-size: 24px;
 	border: none;  
 	border-bottom: 2px solid black;  
-	box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.07)
+	box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.07);
+
+	@include respond-to('large') {
+		height: 62px;
+		font-size: 20px;
+	  }
 }
 
 
