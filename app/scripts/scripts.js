@@ -9,7 +9,7 @@ var yearsSelector = document.getElementById("years");
 var tagsSelector = document.getElementById("tags");
 
 var globalData = [];
-var yearsList = [];
+var yearsList = ["Wszystkie"];
 var tagsList = [];
 
 // stop default form behavior
@@ -54,10 +54,10 @@ function fetchData() {
             tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
         });
 
-        var output = "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\" checked>\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n                </div>\n            ";
+        var output = "\n                <div class=\"form--row\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\" checked>\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n                </div>\n            ";
 
         tagsList.forEach(function (tag, index) {
-            return output += "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "<span>&#x2716;</span></label>\n                </div>\n                ";
+            return output += "\n                <div class=\"form--row\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "<span>&#x2716;</span></label>\n                </div>\n                ";
         });
         tagsSelector.innerHTML = output;
 
@@ -77,6 +77,34 @@ function fetchData() {
 }
 
 // ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
+
+// Filter throught all inputs
+function filterAll(globalData, year, chars, tags) {
+
+    var filteredData = void 0;
+
+    // filter by year
+    year !== "Wszystkie" ? filteredData = globalData.filter(function (raport) {
+        return raport.date.getFullYear() == year;
+    }) : filteredData = globalData;
+
+    // filter by chars
+    filteredData = filteredData.filter(function (raport) {
+        return raport.title.includes(chars) || raport.description.includes(chars);
+    });
+
+    // filter by tags
+    var tagsSelected = tagsList.filter(function (tag, index) {
+        return document.getElementById("check" + index).checked ? tag : null;
+    });
+
+    !document.getElementById("checkAll").checked ? filteredData = filteredData.filter(function (raport) {
+        return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
+    }) // do poprawy
+    : null;
+
+    renderData(filteredData);
+}
 // function filterByYear(data,year){
 //     const filteredData = data.filter(raport => raport.date.getFullYear() == year );
 //     renderData(filteredData);
@@ -93,28 +121,6 @@ function fetchData() {
 //     : renderData(filteredData);
 // }
 
-
-// Filter throught all inputs
-function filterAll(globalData, year, chars, tags) {
-
-    // filtruj przez rok
-    var filteredData = globalData.filter(function (raport) {
-        return raport.date.getFullYear() == year;
-    });
-    // filtruj przez tekst
-    filteredData = filteredData.filter(function (raport) {
-        return raport.title.includes(chars) || raport.description.includes(chars);
-    });
-    // filtruj przez tagi
-    var tagsSelected = tagsList.filter(function (tag, index) {
-        return document.getElementById("check" + index).checked ? tag : null;
-    });
-    !document.getElementById("checkAll").checked ? filteredData = filteredData.filter(function (raport) {
-        return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
-    }) : null;
-
-    renderData(filteredData);
-}
 
 // ---------  Generowanie boxów z raportami w <main> --------- 
 function renderData(data) {
@@ -134,11 +140,11 @@ function renderData(data) {
             return filesOutput += "\n                <a>\n                    Pobierz " + file.filename + ".pdf    (" + file.filesize + "kB)\n                </a>";
         });
 
-        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a class=\"toggle-files\" id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania (" + element.files.length + ")     <i class=\"arrow arrow-down\"></i>\n                </a>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    <hr>\n                    " + filesOutput + "\n                </div>";
+        var attachedFiles = element.files.length === 0 ? "" : element.files.length === 1 ? " <a>\n                    Pobierz " + element.files[0].filename + ".pdf    (" + element.files[0].filesize + "kB)\n                </a>" : " <a class=\"block--raport--files--toggled\" id=\"toggleFiles" + filesToggleIndex + "\"}>\n                    Pliki do pobrania (" + element.files.length + ")     \n                    <i class=\"arrow arrow-down\"></i>\n                </a>\n                <div class=\"hidden\" id=\"visibleFiles" + filesToggleIndex + "\">\n                    <hr>\n                    " + filesOutput + "\n                </div>";
 
         element.files.length >= 2 ? filesToggleIndex++ : null;
 
-        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"date-category f-left\">\n                    <p><b>" + dayMonthYear + "</b></p>\n                    <p><b>" + minutesHour + "</b></p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"title-description-files f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"files f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
+        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"block--date-category f-left\">\n                    <p><b>" + dayMonthYear + "</b></p>\n                    <p><b>" + minutesHour + "</b></p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"block--raport f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"block--raport--files f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
     });
     // Renderowanie treści
     output === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
@@ -158,9 +164,6 @@ function renderData(data) {
 }
 
 window.addEventListener("load", fetchData());
-// yearsSelector.addEventListener("change", () => filterByYear(globalData, yearsSelector.value))
-// searchButton.addEventListener("click", () => filterByChars(globalData, searchInput.value));
-
 
 yearsSelector.addEventListener("change", function () {
     return filterAll(globalData, yearsSelector.value, searchInput.value);

@@ -5,7 +5,7 @@ const yearsSelector = document.getElementById("years");
 const tagsSelector = document.getElementById("tags");
 
 let globalData = [];
-let yearsList = [];
+let yearsList = ["Wszystkie"];
 let tagsList = [];
 
 // stop default form behavior
@@ -48,14 +48,14 @@ function fetchData() {
             })
 
             let output = `
-                <div class="formrow">
+                <div class="form--row">
                     <input class="checkbox" type="checkbox" name="checkAll" id="checkAll" checked>
                     <label class="checklabel" for="checkAll">Wszystkie <span>&#x2716;</span></label>
                 </div>
             `;
 
             tagsList.forEach((tag, index) => output += `
-                <div class="formrow">
+                <div class="form--row">
                     <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
                     <label class="checklabel" for="check${index}">${tag}<span>&#x2716;</span></label>
                 </div>
@@ -77,6 +77,29 @@ function fetchData() {
 
 
 // ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
+
+// Filter throught all inputs
+function filterAll( globalData , year , chars , tags ) {
+
+    let filteredData;
+
+    // filter by year
+    year !== "Wszystkie"
+    ?   filteredData = globalData.filter(raport => raport.date.getFullYear() == year )
+    :   filteredData = globalData;
+
+    // filter by chars
+    filteredData = filteredData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
+    
+    // filter by tags
+    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);   
+
+    !   document.getElementById(`checkAll`).checked
+    ?   filteredData = filteredData.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3])   // do poprawy
+    :   null;
+
+    renderData(filteredData);
+}
 // function filterByYear(data,year){
 //     const filteredData = data.filter(raport => raport.date.getFullYear() == year );
 //     renderData(filteredData);
@@ -92,23 +115,6 @@ function fetchData() {
 //     ? renderData(globalData)
 //     : renderData(filteredData);
 // }
-
-
-// Filter throught all inputs
-function filterAll( globalData , year , chars , tags ) {
-
-    // filtruj przez rok
-    let filteredData = globalData.filter(raport => raport.date.getFullYear() == year );
-    // filtruj przez tekst
-    filteredData = filteredData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
-    // filtruj przez tagi
-    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);       
-    !document.getElementById(`checkAll`).checked
-    ?   filteredData = filteredData.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3])   
-    :   null;
-
-    renderData(filteredData);
-}
 
 
 
@@ -140,8 +146,9 @@ function renderData(data){
             ? ` <a>
                     Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
                 </a>`
-            : ` <a class="toggle-files" id="toggleFiles${filesToggleIndex}"}>
-                    Pliki do pobrania (${element.files.length})     <i class="arrow arrow-down"></i>
+            : ` <a class="block--raport--files--toggled" id="toggleFiles${filesToggleIndex}"}>
+                    Pliki do pobrania (${element.files.length})     
+                    <i class="arrow arrow-down"></i>
                 </a>
                 <div class="hidden" id="visibleFiles${filesToggleIndex}">
                     <hr>
@@ -153,18 +160,18 @@ function renderData(data){
 
         output += `
             <div class="block clear-fix">
-                <div class="date-category f-left">
+                <div class="block--date-category f-left">
                     <p><b>${dayMonthYear}</b></p>
                     <p><b>${minutesHour}</b></p>
                     <p>${element.category}</p>
                 </div>
-                <div class="title-description-files f-left">
+                <div class="block--raport f-left">
                     <h2>${element.title}</h2>
                     <p>${element.description}</p>
                     <div class="f-left">
                         <a>Zobacz raport</a>
                     </div>
-                    <div class="files f-left">
+                    <div class="block--raport--files f-left">
                         ${attachedFiles}
                     </div>
                 </div>
@@ -186,9 +193,6 @@ function renderData(data){
 }
 
 window.addEventListener("load", fetchData());
-// yearsSelector.addEventListener("change", () => filterByYear(globalData, yearsSelector.value))
-// searchButton.addEventListener("click", () => filterByChars(globalData, searchInput.value));
-
 
 yearsSelector.addEventListener("change", () => filterAll(globalData, yearsSelector.value, searchInput.value));
 searchButton.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));

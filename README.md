@@ -3,8 +3,9 @@ Things yet to improve:
 - OK - integrate search methods(years,chars,tags)
 - improve tags filtering
 - add code comments
-- IE suppor?
-- OK - prevent default form behavior(+ unify all browsers)
+- IE suppor
+- OK - prevent default form behavior
+- unify form - all browsers
 
 # Simple Gulp with SASS template
 

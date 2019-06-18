@@ -9,7 +9,7 @@ main {
 			border-bottom: 1px solid #9b9b9b;
 		}
 		
-		.date-category {
+		&--date-category {
 			width: 20%;
 
 			@include respond-to('small') {
@@ -32,7 +32,7 @@ main {
 			}
 		}
 	
-		.title-description-files {
+		&--raport {
 			width: 80%;
 
 			@include respond-to('small') {
@@ -59,15 +59,16 @@ main {
 
 			}
 
-			.files{
-				margin-left: 22px;
+			&--files{
+				margin-left: 22px;    
+				width: 250px;
 
 				@include respond-to('small') {
 					margin-left: 0;
 					width:100%;
 				}
 				
-				.toggle-files{
+				&--toggled{
 					display: inline;					
 				}
 			}
