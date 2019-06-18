@@ -4,10 +4,13 @@ const searchButton = document.getElementById("searchButton");
 const yearsSelector = document.getElementById("years");
 const tagsSelector = document.getElementById("tags");
 
-let globalData = "";
+let globalData = [];
 let yearsList = [];
 let tagsList = [];
 
+// stop default form behavior
+const form = document.getElementById('form');
+form.addEventListener('submit', e => e.preventDefault());
 
 // --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
 function fetchData() {
@@ -35,8 +38,7 @@ function fetchData() {
 
             yearsSelector.selectedIndex = yearsSelector.options.length-1;
             let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
-            filterByYear(globalData, strUser)
-        
+
             
             // setTags
             data.forEach(element => {
@@ -47,7 +49,7 @@ function fetchData() {
 
             let output = `
                 <div class="formrow">
-                    <input class="checkbox" type="checkbox" name="checkAll" id="checkAll">
+                    <input class="checkbox" type="checkbox" name="checkAll" id="checkAll" checked>
                     <label class="checklabel" for="checkAll">Wszystkie <span>&#x2716;</span></label>
                 </div>
             `;
@@ -60,32 +62,51 @@ function fetchData() {
                 `
             );    
             tagsSelector.innerHTML = output;
+
             //Add listeners to all tags
-            document.getElementById(`checkAll`).addEventListener("click", () => filterByTag(globalData));
+            document.getElementById(`checkAll`).addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
             tagsList.map((tag, index) => {
                 const option = document.getElementById(`check${index}`);
-                option.addEventListener("click", () => filterByTag(globalData));
-            });           
+                option.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+            });   
+            
+            
+            filterAll(globalData, yearsSelector.value, searchInput.value)
         });
 }
 
 
 // ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
-function filterByYear(data,value){
-    const filteredData = data.filter(raport => raport.date.getFullYear() == value );
-    renderData(filteredData);
-}
+// function filterByYear(data,year){
+//     const filteredData = data.filter(raport => raport.date.getFullYear() == year );
+//     renderData(filteredData);
+// }
+// function filterByChars(data,chars){
+//     const filteredData = data.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
+//     renderData(filteredData);
+// }
+// function filterByTag(data,value){
+//     const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
+//     const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);   
+//     document.getElementById(`checkAll`).checked 
+//     ? renderData(globalData)
+//     : renderData(filteredData);
+// }
 
-function filterByTag(data,value){
-    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
-    const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);   
-    document.getElementById(`checkAll`).checked 
-    ? renderData(globalData)
-    : renderData(filteredData);
-}
 
-function filterByChars(data,value){
-    const filteredData = data.filter(raport => raport.title.includes(value) || raport.description.includes(value));
+// Filter throught all inputs
+function filterAll( globalData , year , chars , tags ) {
+
+    // filtruj przez rok
+    let filteredData = globalData.filter(raport => raport.date.getFullYear() == year );
+    // filtruj przez tekst
+    filteredData = filteredData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
+    // filtruj przez tagi
+    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);       
+    !document.getElementById(`checkAll`).checked
+    ?   filteredData = filteredData.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3])   
+    :   null;
+
     renderData(filteredData);
 }
 
@@ -165,5 +186,9 @@ function renderData(data){
 }
 
 window.addEventListener("load", fetchData());
-searchButton.addEventListener("click", () => filterByChars(globalData, searchInput.value));
-yearsSelector.addEventListener("change", () => filterByYear(globalData, yearsSelector.value))
+// yearsSelector.addEventListener("change", () => filterByYear(globalData, yearsSelector.value))
+// searchButton.addEventListener("click", () => filterByChars(globalData, searchInput.value));
+
+
+yearsSelector.addEventListener("change", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+searchButton.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));

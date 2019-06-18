@@ -8,9 +8,15 @@ var searchButton = document.getElementById("searchButton");
 var yearsSelector = document.getElementById("years");
 var tagsSelector = document.getElementById("tags");
 
-var globalData = "";
+var globalData = [];
 var yearsList = [];
 var tagsList = [];
+
+// stop default form behavior
+var form = document.getElementById('form');
+form.addEventListener('submit', function (e) {
+    return e.preventDefault();
+});
 
 // --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
 function fetchData() {
@@ -40,7 +46,6 @@ function fetchData() {
 
         yearsSelector.selectedIndex = yearsSelector.options.length - 1;
         var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
-        filterByYear(globalData, strUser);
 
         // setTags
         data.forEach(function (element) {
@@ -49,47 +54,65 @@ function fetchData() {
             tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
         });
 
-        var output = "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\">\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n                </div>\n            ";
+        var output = "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\" checked>\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n                </div>\n            ";
 
         tagsList.forEach(function (tag, index) {
             return output += "\n                <div class=\"formrow\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "<span>&#x2716;</span></label>\n                </div>\n                ";
         });
         tagsSelector.innerHTML = output;
+
         //Add listeners to all tags
         document.getElementById("checkAll").addEventListener("click", function () {
-            return filterByTag(globalData);
+            return filterAll(globalData, yearsSelector.value, searchInput.value);
         });
         tagsList.map(function (tag, index) {
             var option = document.getElementById("check" + index);
             option.addEventListener("click", function () {
-                return filterByTag(globalData);
+                return filterAll(globalData, yearsSelector.value, searchInput.value);
             });
         });
+
+        filterAll(globalData, yearsSelector.value, searchInput.value);
     });
 }
 
 // ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
-function filterByYear(data, value) {
-    var filteredData = data.filter(function (raport) {
-        return raport.date.getFullYear() == value;
-    });
-    renderData(filteredData);
-}
+// function filterByYear(data,year){
+//     const filteredData = data.filter(raport => raport.date.getFullYear() == year );
+//     renderData(filteredData);
+// }
+// function filterByChars(data,chars){
+//     const filteredData = data.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
+//     renderData(filteredData);
+// }
+// function filterByTag(data,value){
+//     const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
+//     const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);   
+//     document.getElementById(`checkAll`).checked 
+//     ? renderData(globalData)
+//     : renderData(filteredData);
+// }
 
-function filterByTag(data, value) {
+
+// Filter throught all inputs
+function filterAll(globalData, year, chars, tags) {
+
+    // filtruj przez rok
+    var filteredData = globalData.filter(function (raport) {
+        return raport.date.getFullYear() == year;
+    });
+    // filtruj przez tekst
+    filteredData = filteredData.filter(function (raport) {
+        return raport.title.includes(chars) || raport.description.includes(chars);
+    });
+    // filtruj przez tagi
     var tagsSelected = tagsList.filter(function (tag, index) {
         return document.getElementById("check" + index).checked ? tag : null;
     });
-    var filteredData = data.filter(function (raport) {
+    !document.getElementById("checkAll").checked ? filteredData = filteredData.filter(function (raport) {
         return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
-    });
-    document.getElementById("checkAll").checked ? renderData(globalData) : renderData(filteredData);
-}
+    }) : null;
 
-function filterByChars(data, value) {
-    var filteredData = data.filter(function (raport) {
-        return raport.title.includes(value) || raport.description.includes(value);
-    });
     renderData(filteredData);
 }
 
@@ -135,9 +158,13 @@ function renderData(data) {
 }
 
 window.addEventListener("load", fetchData());
-searchButton.addEventListener("click", function () {
-    return filterByChars(globalData, searchInput.value);
-});
+// yearsSelector.addEventListener("change", () => filterByYear(globalData, yearsSelector.value))
+// searchButton.addEventListener("click", () => filterByChars(globalData, searchInput.value));
+
+
 yearsSelector.addEventListener("change", function () {
-    return filterByYear(globalData, yearsSelector.value);
+    return filterAll(globalData, yearsSelector.value, searchInput.value);
+});
+searchButton.addEventListener("click", function () {
+    return filterAll(globalData, yearsSelector.value, searchInput.value);
 });

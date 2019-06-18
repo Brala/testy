@@ -1,11 +1,10 @@
 Things yet to improve:
 - implement BEM methodology
-- finish RWD
-- integrate search methods(years,chars,tags)
+- OK - integrate search methods(years,chars,tags)
+- improve tags filtering
 - add code comments
-
-
-
+- IE suppor?
+- OK - prevent default form behavior(+ unify all browsers)
 
 # Simple Gulp with SASS template
 

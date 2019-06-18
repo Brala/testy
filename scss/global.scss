@@ -59,7 +59,10 @@ $breakpoints: (
 
 }
 
-
+html {
+	overflow-y: auto;
+	width: 100vw;
+}
 body {
 	font-family: 'Roboto', sans-serif;
 	color: $font-main;
