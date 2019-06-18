@@ -8,12 +8,12 @@ let globalData = [];
 let yearsList = ["Wszystkie"];
 let tagsList = [];
 
-// stop default form behavior
+//  stop default form behavior
 const form = document.getElementById('form');
 form.addEventListener('submit', e => e.preventDefault());
 
 
-// --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
+//  --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
 
 function fetchData() {
 
@@ -22,93 +22,99 @@ function fetchData() {
             return resp.json();
         })
         .then(function(data) {
-            // format unix_timestamp to js Date()
+//  format unix_timestamp to js Date()
             data.map(raport => raport.date = new Date(raport.date))
-            globalData = data;
-
-
-            // setYears
-            data.forEach(element => {
-                const year = element.date.getFullYear(); 
-                yearsList.push(year);
-                yearsList = [...new Set(yearsList)];
-            })
-            yearsList.sort((a, b) => a - b);
-            const yearsArrow = '<i class="arrow arrow-down"></i> '
-            yearsSelector.innerHTML = yearsArrow
-            + yearsList.map(year => `<option>${year}</option>`);
-
-            yearsSelector.selectedIndex = yearsSelector.options.length-1;
-            let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
-
+            globalData = data;           
             
-            // setTags
-            data.forEach(element => {
-                const tag = element.category;
-                tagsList.push(tag);
-                tagsList = [...new Set(tagsList)];
-            })
-
-            let output = `
-                <div class="form--row">
-                    <input class="checkbox" type="checkbox" name="checkAll" id="checkAll" checked>
-                    <label class="checklabel" for="checkAll">Wszystkie <span>&#x2716;</span></label>
-                </div>
-            `;
-
-            tagsList.forEach((tag, index) => output += `
-                <div class="form--row">
-                    <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
-                    <label class="checklabel" for="check${index}">${tag}<span>&#x2716;</span></label>
-                </div>
-                `
-            );    
-            tagsSelector.innerHTML = output;
-
-            //Add listeners to all tags
-            document.getElementById(`checkAll`).addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
-            tagsList.map((tag, index) => {
-                const option = document.getElementById(`check${index}`);
-                option.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
-            });   
-            
-            
+//  window.onload start search form and initial reports 
+            renderFiltersForm()
             filterAll(globalData, yearsSelector.value, searchInput.value)
         });
+
 }
 
 
 
-// ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
+//  ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
 
 function filterAll( globalData , year , chars , tags ) {
 
     let filteredData;
 
-    // filter by year
+//  filter by year
     year !== "Wszystkie"
     ?   filteredData = globalData.filter(raport => raport.date.getFullYear() == year )
     :   filteredData = globalData;
 
-    // filter by chars
+//  filter by chars
     filteredData = filteredData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
     
-    // filter by tags
+//  filter by tags
     const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null); 
-
     !   document.getElementById(`checkAll`).checked
     ?   filteredData = filteredData.filter(raport => tagsSelected.some(el => el === raport.category))
     :   null;
 
-    renderData(filteredData);
+    renderReportsData(filteredData);
+
+}
+
+
+//  ---------  Generowanie formularza filtrownicy --------- 
+function renderFiltersForm(){
+
+//  setYears
+    globalData.forEach(element => {
+        const year = element.date.getFullYear(); 
+        yearsList.push(year);
+        yearsList = [...new Set(yearsList)];
+    })
+    yearsList.sort((a, b) => a - b);
+    const yearsArrow = '<i class="arrow arrow-down"></i> '
+    yearsSelector.innerHTML = yearsArrow
+    + yearsList.map(year => `<option>${year}</option>`);
+
+    yearsSelector.selectedIndex = yearsSelector.options.length-1;
+    let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
+
+//  setTags
+    globalData.forEach(element => {
+        const tag = element.category;
+        tagsList.push(tag);
+        tagsList = [...new Set(tagsList)];
+    })
+
+    let tagsOutput = `
+        <div class="form--row">
+            <input class="checkbox" type="checkbox" name="checkAll" id="checkAll" checked>
+            <label class="checklabel" for="checkAll">Wszystkie <span>&#x2716;</span></label>
+        </div>
+    `;
+
+    tagsList.forEach((tag, index) => tagsOutput += `
+        <div class="form--row">
+            <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
+            <label class="checklabel" for="check${index}">${tag}<span>&#x2716;</span></label>
+        </div>
+        `
+    );    
+    tagsSelector.innerHTML = tagsOutput;
+
+//  Add listeners to tag-elements
+    document.getElementById(`checkAll`).addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+    tagsList.map((tag, index) => {
+        const option = document.getElementById(`check${index}`);
+        option.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+    });   
+
 }
 
 
 
-// ---------  Generowanie boxów z raportami w <main> --------- 
-function renderData(data){
+//  ---------  Generowanie boxów z raportami w <main> --------- 
+function renderReportsData(data){
 
-    let output = "";
+    let reportsOutput = "";
     let filesToggleIndex = 0;
 
     data.forEach((element, index) => {  
@@ -128,12 +134,12 @@ function renderData(data){
 
         const attachedFiles = 
             element.files.length === 0 
-            ? ""
-            : element.files.length === 1 
-            ? ` <a>
+            ?   ""
+            :   element.files.length === 1 
+            ?   ` <a>
                     Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
                 </a>`
-            : ` <a class="block--raport--files--toggled" id="toggleFiles${filesToggleIndex}"}>
+            :   ` <a class="block--raport--files--toggled" id="toggleFiles${filesToggleIndex}"}>
                     Pliki do pobrania (${element.files.length})     
                     <i class="arrow arrow-down"></i>
                 </a>
@@ -145,7 +151,7 @@ function renderData(data){
         element.files.length >= 2 ? filesToggleIndex++ : null;
 
 
-        output += `
+        reportsOutput += `
             <div class="block clear-fix">
                 <div class="block--date-category f-left">
                     <p><b>${dayMonthYear}</b></p>
@@ -165,21 +171,22 @@ function renderData(data){
             </div>
         `;
     });
-    // Renderowanie treści
-    output === ""
-    ? list.innerHTML = "Brak wyników spełniających kryteria" 
-    : list.innerHTML = output;
 
-    // Dodawanie click-listenerów do "Pliki do pobrania"
+//  Wstawienie raportow na strone
+    reportsOutput === ""
+    ? list.innerHTML = "Brak wyników spełniających kryteria" 
+    : list.innerHTML = reportsOutput;
+
+//  Dodawanie click-listenerów do "Pliki do pobrania"
     for( let i=0 ; i<filesToggleIndex ; i++ ){
         document.getElementById(`toggleFiles${i}`).addEventListener("click", () => {
             document.getElementById(`visibleFiles${i}`).classList.toggle("hidden");
             document.querySelector(`#toggleFiles${i} i`).classList.toggle("arrow-up");
         });
     }
+
 }
 
 window.addEventListener("load", fetchData());
-
 yearsSelector.addEventListener("change", () => filterAll(globalData, yearsSelector.value, searchInput.value));
 searchButton.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));

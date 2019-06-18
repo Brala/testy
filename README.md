@@ -3,9 +3,11 @@ Things yet to improve:
 - OK - integrate search methods(years,chars,tags)
 - OK - improve tags filtering
 - OK - prevent default form behavior
-- add code comments
+- better array operations/methods
+- add code comments + better naming
 - support for IE
-- unify form - all browsers
+- unify form styles for all browsers
+- add animations
 
 # Simple Gulp with SASS template
 

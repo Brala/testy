@@ -12,105 +12,110 @@ var globalData = [];
 var yearsList = ["Wszystkie"];
 var tagsList = [];
 
-// stop default form behavior
+//  stop default form behavior
 var form = document.getElementById('form');
 form.addEventListener('submit', function (e) {
     return e.preventDefault();
 });
 
-// --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
+//  --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
 
 function fetchData() {
 
     fetch("data.json").then(function (resp) {
         return resp.json();
     }).then(function (data) {
-        // format unix_timestamp to js Date()
+        //  format unix_timestamp to js Date()
         data.map(function (raport) {
             return raport.date = new Date(raport.date);
         });
         globalData = data;
 
-        // setYears
-        data.forEach(function (element) {
-            var year = element.date.getFullYear();
-            yearsList.push(year);
-            yearsList = [].concat(_toConsumableArray(new Set(yearsList)));
-        });
-        yearsList.sort(function (a, b) {
-            return a - b;
-        });
-        var yearsArrow = '<i class="arrow arrow-down"></i> ';
-        yearsSelector.innerHTML = yearsArrow + yearsList.map(function (year) {
-            return "<option>" + year + "</option>";
-        });
-
-        yearsSelector.selectedIndex = yearsSelector.options.length - 1;
-        var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
-
-        // setTags
-        data.forEach(function (element) {
-            var tag = element.category;
-            tagsList.push(tag);
-            tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
-        });
-
-        var output = "\n                <div class=\"form--row\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\" checked>\n                    <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n                </div>\n            ";
-
-        tagsList.forEach(function (tag, index) {
-            return output += "\n                <div class=\"form--row\">\n                    <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n                    <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "<span>&#x2716;</span></label>\n                </div>\n                ";
-        });
-        tagsSelector.innerHTML = output;
-
-        //Add listeners to all tags
-        document.getElementById("checkAll").addEventListener("click", function () {
-            return filterAll(globalData, yearsSelector.value, searchInput.value);
-        });
-        tagsList.map(function (tag, index) {
-            var option = document.getElementById("check" + index);
-            option.addEventListener("click", function () {
-                return filterAll(globalData, yearsSelector.value, searchInput.value);
-            });
-        });
-
+        //  window.onload start search form and initial reports 
+        renderFiltersForm();
         filterAll(globalData, yearsSelector.value, searchInput.value);
     });
 }
 
-// ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
+//  ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
 
 function filterAll(globalData, year, chars, tags) {
 
     var filteredData = void 0;
 
-    // filter by year
+    //  filter by year
     year !== "Wszystkie" ? filteredData = globalData.filter(function (raport) {
         return raport.date.getFullYear() == year;
     }) : filteredData = globalData;
 
-    // filter by chars
+    //  filter by chars
     filteredData = filteredData.filter(function (raport) {
         return raport.title.includes(chars) || raport.description.includes(chars);
     });
 
-    // filter by tags
+    //  filter by tags
     var tagsSelected = tagsList.filter(function (tag, index) {
         return document.getElementById("check" + index).checked ? tag : null;
     });
-
     !document.getElementById("checkAll").checked ? filteredData = filteredData.filter(function (raport) {
         return tagsSelected.some(function (el) {
             return el === raport.category;
         });
     }) : null;
 
-    renderData(filteredData);
+    renderReportsData(filteredData);
 }
 
-// ---------  Generowanie boxów z raportami w <main> --------- 
-function renderData(data) {
+//  ---------  Generowanie formularza filtrownicy --------- 
+function renderFiltersForm() {
 
-    var output = "";
+    //  setYears
+    globalData.forEach(function (element) {
+        var year = element.date.getFullYear();
+        yearsList.push(year);
+        yearsList = [].concat(_toConsumableArray(new Set(yearsList)));
+    });
+    yearsList.sort(function (a, b) {
+        return a - b;
+    });
+    var yearsArrow = '<i class="arrow arrow-down"></i> ';
+    yearsSelector.innerHTML = yearsArrow + yearsList.map(function (year) {
+        return "<option>" + year + "</option>";
+    });
+
+    yearsSelector.selectedIndex = yearsSelector.options.length - 1;
+    var strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
+
+    //  setTags
+    globalData.forEach(function (element) {
+        var tag = element.category;
+        tagsList.push(tag);
+        tagsList = [].concat(_toConsumableArray(new Set(tagsList)));
+    });
+
+    var tagsOutput = "\n        <div class=\"form--row\">\n            <input class=\"checkbox\" type=\"checkbox\" name=\"checkAll\" id=\"checkAll\" checked>\n            <label class=\"checklabel\" for=\"checkAll\">Wszystkie <span>&#x2716;</span></label>\n        </div>\n    ";
+
+    tagsList.forEach(function (tag, index) {
+        return tagsOutput += "\n        <div class=\"form--row\">\n            <input class=\"checkbox\" type=\"checkbox\" name=\"check" + index + "\" id=\"check" + index + "\">\n            <label class=\"checklabel\" for=\"check" + index + "\">" + tag + "<span>&#x2716;</span></label>\n        </div>\n        ";
+    });
+    tagsSelector.innerHTML = tagsOutput;
+
+    //  Add listeners to tag-elements
+    document.getElementById("checkAll").addEventListener("click", function () {
+        return filterAll(globalData, yearsSelector.value, searchInput.value);
+    });
+    tagsList.map(function (tag, index) {
+        var option = document.getElementById("check" + index);
+        option.addEventListener("click", function () {
+            return filterAll(globalData, yearsSelector.value, searchInput.value);
+        });
+    });
+}
+
+//  ---------  Generowanie boxów z raportami w <main> --------- 
+function renderReportsData(data) {
+
+    var reportsOutput = "";
     var filesToggleIndex = 0;
 
     data.forEach(function (element, index) {
@@ -129,12 +134,13 @@ function renderData(data) {
 
         element.files.length >= 2 ? filesToggleIndex++ : null;
 
-        output += "\n            <div class=\"block clear-fix\">\n                <div class=\"block--date-category f-left\">\n                    <p><b>" + dayMonthYear + "</b></p>\n                    <p><b>" + minutesHour + "</b></p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"block--raport f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"block--raport--files f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
+        reportsOutput += "\n            <div class=\"block clear-fix\">\n                <div class=\"block--date-category f-left\">\n                    <p><b>" + dayMonthYear + "</b></p>\n                    <p><b>" + minutesHour + "</b></p>\n                    <p>" + element.category + "</p>\n                </div>\n                <div class=\"block--raport f-left\">\n                    <h2>" + element.title + "</h2>\n                    <p>" + element.description + "</p>\n                    <div class=\"f-left\">\n                        <a>Zobacz raport</a>\n                    </div>\n                    <div class=\"block--raport--files f-left\">\n                        " + attachedFiles + "\n                    </div>\n                </div>\n            </div>\n        ";
     });
-    // Renderowanie treści
-    output === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = output;
 
-    // Dodawanie click-listenerów do "Pliki do pobrania"
+    //  Wstawienie raportow na strone
+    reportsOutput === "" ? list.innerHTML = "Brak wyników spełniających kryteria" : list.innerHTML = reportsOutput;
+
+    //  Dodawanie click-listenerów do "Pliki do pobrania"
 
     var _loop = function _loop(i) {
         document.getElementById("toggleFiles" + i).addEventListener("click", function () {
@@ -149,7 +155,6 @@ function renderData(data) {
 }
 
 window.addEventListener("load", fetchData());
-
 yearsSelector.addEventListener("change", function () {
     return filterAll(globalData, yearsSelector.value, searchInput.value);
 });
