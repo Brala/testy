@@ -19,6 +19,7 @@ form.addEventListener('submit', function (e) {
 });
 
 // --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
+
 function fetchData() {
 
     fetch("data.json").then(function (resp) {
@@ -76,9 +77,8 @@ function fetchData() {
     });
 }
 
-// ---------  Filtrowanie(Przeszukiwanie) danych z JSONa --------- 
+// ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
 
-// Filter throught all inputs
 function filterAll(globalData, year, chars, tags) {
 
     var filteredData = void 0;
@@ -99,28 +99,13 @@ function filterAll(globalData, year, chars, tags) {
     });
 
     !document.getElementById("checkAll").checked ? filteredData = filteredData.filter(function (raport) {
-        return raport.category === tagsSelected[0] || raport.category === tagsSelected[1] || raport.category === tagsSelected[2] || raport.category === tagsSelected[3];
-    }) // do poprawy
-    : null;
+        return tagsSelected.some(function (el) {
+            return el === raport.category;
+        });
+    }) : null;
 
     renderData(filteredData);
 }
-// function filterByYear(data,year){
-//     const filteredData = data.filter(raport => raport.date.getFullYear() == year );
-//     renderData(filteredData);
-// }
-// function filterByChars(data,chars){
-//     const filteredData = data.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
-//     renderData(filteredData);
-// }
-// function filterByTag(data,value){
-//     const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
-//     const filteredData = data.filter(raport => raport.category === tagsSelected[0] ||  raport.category === tagsSelected[1] ||raport.category === tagsSelected[2] ||raport.category === tagsSelected[3]);   
-//     document.getElementById(`checkAll`).checked 
-//     ? renderData(globalData)
-//     : renderData(filteredData);
-// }
-
 
 // ---------  Generowanie boxów z raportami w <main> --------- 
 function renderData(data) {
