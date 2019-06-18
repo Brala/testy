@@ -9,11 +9,11 @@ let yearsList = ["Wszystkie"];
 let tagsList = [];
 
 //  stop default form behavior
-const form = document.getElementById('form');
-form.addEventListener('submit', e => e.preventDefault());
+document.getElementById('form').addEventListener('submit', e => e.preventDefault());
 
 
-//  --------- Wstępne formatowanie danych z JSON + generowanie szkieletu Filtrownicy  --------- 
+
+//  --------- Wstępne formatowanie danych z JSON  --------- 
 
 function fetchData() {
 
@@ -22,76 +22,80 @@ function fetchData() {
             return resp.json();
         })
         .then(function(data) {
-//  format unix_timestamp to js Date()
+            //  format unix_timestamp to js Date()
             data.map(raport => raport.date = new Date(raport.date))
-            globalData = data;           
+            globalData = [...data];           
             
-//  window.onload start search form and initial reports 
+            //  after fetch render search form and initial reports 
             renderFiltersForm()
-            filterAll(globalData, yearsSelector.value, searchInput.value)
-        });
-
+            filterByAll(globalData, yearsSelector.value, searchInput.value)
+        })
+        .catch(error => console.error(error));
 }
 
 
 
 //  ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
 
-function filterAll( globalData , year , chars , tags ) {
+function filterByAll( globalData , year , chars , tags ) {
 
     let filteredData;
 
-//  filter by year
-    year !== "Wszystkie"
+    //  filter by year
+        year !== "Wszystkie"
     ?   filteredData = globalData.filter(raport => raport.date.getFullYear() == year )
     :   filteredData = globalData;
 
-//  filter by chars
+    //  filter by chars
     filteredData = filteredData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
     
-//  filter by tags
-    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null); 
-    !   document.getElementById(`checkAll`).checked
+    //  filter by tags
+    const tagsSelected = 
+    tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null); 
+        !document.getElementById(`checkAll`).checked
     ?   filteredData = filteredData.filter(raport => tagsSelected.some(el => el === raport.category))
     :   null;
 
     renderReportsData(filteredData);
-
 }
 
 
-//  ---------  Generowanie formularza filtrownicy --------- 
+//  ---------  Generowanie szkieletu formularza/filtrownicy --------- 
+
 function renderFiltersForm(){
 
-//  setYears
+    //  set avilable Years from data
     globalData.forEach(element => {
         const year = element.date.getFullYear(); 
         yearsList.push(year);
-        yearsList = [...new Set(yearsList)];
     })
+    yearsList = [...new Set(yearsList)];
     yearsList.sort((a, b) => a - b);
+
     const yearsArrow = '<i class="arrow arrow-down"></i> '
+
     yearsSelector.innerHTML = yearsArrow
-    + yearsList.map(year => `<option>${year}</option>`);
+        + yearsList.map(year => `<option>${year}</option>`);
 
     yearsSelector.selectedIndex = yearsSelector.options.length-1;
-    let strUser = yearsSelector.options[yearsSelector.selectedIndex].text;
 
-//  setTags
+    //  set avilable Tags from data
     globalData.forEach(element => {
         const tag = element.category;
         tagsList.push(tag);
-        tagsList = [...new Set(tagsList)];
     })
+    tagsList = [...new Set(tagsList)];
 
-    let tagsOutput = `
+    let tagsOutput = 
+        `
         <div class="form--row">
             <input class="checkbox" type="checkbox" name="checkAll" id="checkAll" checked>
             <label class="checklabel" for="checkAll">Wszystkie <span>&#x2716;</span></label>
         </div>
-    `;
+        `;
 
-    tagsList.forEach((tag, index) => tagsOutput += `
+    tagsList.forEach((tag, index) => tagsOutput += 
+        `
         <div class="form--row">
             <input class="checkbox" type="checkbox" name="check${index}" id="check${index}">
             <label class="checklabel" for="check${index}">${tag}<span>&#x2716;</span></label>
@@ -100,11 +104,11 @@ function renderFiltersForm(){
     );    
     tagsSelector.innerHTML = tagsOutput;
 
-//  Add listeners to tag-elements
-    document.getElementById(`checkAll`).addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+    //  Add listeners to tag-elements
+    document.getElementById(`checkAll`).addEventListener("click", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
     tagsList.map((tag, index) => {
         const option = document.getElementById(`check${index}`);
-        option.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+        option.addEventListener("click", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
     });   
 
 }
@@ -115,7 +119,7 @@ function renderFiltersForm(){
 function renderReportsData(data){
 
     let reportsOutput = "";
-    let filesToggleIndex = 0;
+    let fileTogglersIndex = 0;
 
     data.forEach((element, index) => {  
 
@@ -126,32 +130,39 @@ function renderReportsData(data){
         let filesOutput = "";
 
         element.files.forEach(
-            file => filesOutput += `
+            file => filesOutput += 
+                `
                 <a>
                     Pobierz ${file.filename}.pdf    (${file.filesize}kB)
-                </a>`
+                </a>
+                `
         );
 
         const attachedFiles = 
-            element.files.length === 0 
+                element.files.length === 0 
             ?   ""
             :   element.files.length === 1 
-            ?   ` <a>
+            ?   ` 
+                <a>
                     Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
-                </a>`
-            :   ` <a class="block--raport--files--toggled" id="toggleFiles${filesToggleIndex}"}>
+                </a>
+                `
+            :   ` 
+                <a class="block--raport--files--toggled" id="toggleFiles${fileTogglersIndex}"}>
                     Pliki do pobrania (${element.files.length})     
                     <i class="arrow arrow-down"></i>
                 </a>
-                <div class="hidden" id="visibleFiles${filesToggleIndex}">
+                <div class="hidden" id="visibleFiles${fileTogglersIndex}">
                     <hr>
                     ${filesOutput}
-                </div>`;
+                </div>
+                `;
         
-        element.files.length >= 2 ? filesToggleIndex++ : null;
+        element.files.length >= 2 ? fileTogglersIndex++ : null;
 
 
-        reportsOutput += `
+        reportsOutput += 
+            `
             <div class="block clear-fix">
                 <div class="block--date-category f-left">
                     <p><b>${dayMonthYear}</b></p>
@@ -169,16 +180,16 @@ function renderReportsData(data){
                     </div>
                 </div>
             </div>
-        `;
+            `;
     });
 
-//  Wstawienie raportow na strone
+    //  Render raports on page
     reportsOutput === ""
     ? list.innerHTML = "Brak wyników spełniających kryteria" 
     : list.innerHTML = reportsOutput;
 
-//  Dodawanie click-listenerów do "Pliki do pobrania"
-    for( let i=0 ; i<filesToggleIndex ; i++ ){
+    //  Add listeners to <a>Pliki do pobrania</a>
+    for( let i=0 ; i<fileTogglersIndex ; i++ ){
         document.getElementById(`toggleFiles${i}`).addEventListener("click", () => {
             document.getElementById(`visibleFiles${i}`).classList.toggle("hidden");
             document.querySelector(`#toggleFiles${i} i`).classList.toggle("arrow-up");
@@ -188,5 +199,5 @@ function renderReportsData(data){
 }
 
 window.addEventListener("load", fetchData());
-yearsSelector.addEventListener("change", () => filterAll(globalData, yearsSelector.value, searchInput.value));
-searchButton.addEventListener("click", () => filterAll(globalData, yearsSelector.value, searchInput.value));
+yearsSelector.addEventListener("change", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
+searchButton.addEventListener("click", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
