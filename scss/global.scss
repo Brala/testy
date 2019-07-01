@@ -88,7 +88,7 @@ body {
 	display: inline-block;
 	padding: 5px;
 	
-	&-down {
+	&.arrow-down {
 		transform: rotate(45deg);
 		position: absolute;
 		right: 65px;

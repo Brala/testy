@@ -1,17 +1,14 @@
-const list = document.getElementById("list");
-const searchInput = document.getElementById("searchInput");
-const searchButton = document.getElementById("searchButton");
-const yearsSelector = document.getElementById("years");
-const tagsSelector = document.getElementById("tags");
+const searchInput = document.getElementById("formSearchInput");
+const searchButton = document.getElementById("formSearchButton");
+const yearsSelector = document.getElementById("formYears");
+const tagsSelector = document.getElementById("formTags");
 
-let globalData = [];
+let globalReportsData = [];
 let yearsList = ["Wszystkie"];
 let tagsList = [];
 
 //  stop default form behavior
-document.getElementById('form').addEventListener('submit', e => e.preventDefault());
-
-
+document.getElementById('form').addEventListener('submit', event => event.preventDefault());
 
 //  --------- Wstępne formatowanie danych z JSON  --------- 
 
@@ -24,39 +21,40 @@ function fetchData() {
         .then(function(data) {
             //  format unix_timestamp to js Date()
             data.map(raport => raport.date = new Date(raport.date))
-            globalData = [...data];           
+            globalReportsData = [...data];           
             
             //  after fetch render search form and initial reports 
             renderFiltersForm()
-            filterByAll(globalData, yearsSelector.value, searchInput.value)
+            filterReportsByAllConditions( yearsSelector.value, searchInput.value )
         })
         .catch(error => console.error(error));
 }
 
 
 
+
 //  ---------  Filtrowanie(Przeszukiwanie) danych z JSONa / Filter throught all inputs--------- 
 
-function filterByAll( globalData , year , chars , tags ) {
+function filterReportsByAllConditions( year , chars ) {
 
-    let filteredData;
+    let filteredReportsData;
 
     //  filter by year
         year !== "Wszystkie"
-    ?   filteredData = globalData.filter(raport => raport.date.getFullYear() == year )
-    :   filteredData = globalData;
+    ?   filteredReportsData = globalReportsData.filter(raport => raport.date.getFullYear() == year )
+    :   filteredReportsData = globalReportsData;
 
     //  filter by chars
-    filteredData = filteredData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
+    filteredReportsData = filteredReportsData.filter(raport => raport.title.includes(chars) || raport.description.includes(chars));
     
     //  filter by tags
-    const tagsSelected = 
-    tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null); 
+    const tagsSelected = tagsList.filter((tag,index) => document.getElementById(`check${index}`).checked ? tag : null);
+    
         !document.getElementById(`checkAll`).checked
-    ?   filteredData = filteredData.filter(raport => tagsSelected.some(el => el === raport.category))
+    ?   filteredReportsData = filteredReportsData.filter(raport => tagsSelected.some(element => element === raport.category))
     :   null;
 
-    renderReportsData(filteredData);
+    renderReportsData(filteredReportsData);
 }
 
 
@@ -65,7 +63,7 @@ function filterByAll( globalData , year , chars , tags ) {
 function renderFiltersForm(){
 
     //  set avilable Years from data
-    globalData.forEach(element => {
+    globalReportsData.forEach(element => {
         const year = element.date.getFullYear(); 
         yearsList.push(year);
     })
@@ -80,7 +78,7 @@ function renderFiltersForm(){
     yearsSelector.selectedIndex = yearsSelector.options.length-1;
 
     //  set avilable Tags from data
-    globalData.forEach(element => {
+    globalReportsData.forEach(element => {
         const tag = element.category;
         tagsList.push(tag);
     })
@@ -105,10 +103,10 @@ function renderFiltersForm(){
     tagsSelector.innerHTML = tagsOutput;
 
     //  Add listeners to tag-elements
-    document.getElementById(`checkAll`).addEventListener("click", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
+    document.getElementById(`checkAll`).addEventListener("click", () => filterReportsByAllConditions( yearsSelector.value, searchInput.value));
     tagsList.map((tag, index) => {
         const option = document.getElementById(`check${index}`);
-        option.addEventListener("click", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
+        option.addEventListener("click", () => filterReportsByAllConditions( yearsSelector.value, searchInput.value));
     });   
 
 }
@@ -116,20 +114,20 @@ function renderFiltersForm(){
 
 
 //  ---------  Generowanie boxów z raportami w <main> --------- 
-function renderReportsData(data){
+function renderReportsData(reportsData){
 
-    let reportsOutput = "";
+    let reportsRenderedOutput = false;
     let fileTogglersIndex = 0;
 
-    data.forEach((element, index) => {  
+    reportsData.forEach((report, index) => {  
 
-        const time = element.date;
+        const time = report.date;
         const minutesHour = ('0' + time.getHours()).slice(-2) + ":" + ('0' + time.getMinutes()).slice(-2);
         const dayMonthYear = ('0' + time.getDate()).slice(-2) + "." + ('0' + time.getMonth()).slice(-2) + "." + time.getFullYear();
         
         let filesOutput = "";
 
-        element.files.forEach(
+        report.files.forEach(
             file => filesOutput += 
                 `
                 <a>
@@ -139,17 +137,17 @@ function renderReportsData(data){
         );
 
         const attachedFiles = 
-                element.files.length === 0 
+                report.files.length === 0 
             ?   ""
-            :   element.files.length === 1 
+            :   report.files.length === 1 
             ?   ` 
                 <a>
-                    Pobierz ${element.files[0].filename}.pdf    (${element.files[0].filesize}kB)
+                    Pobierz ${report.files[0].filename}.pdf    (${report.files[0].filesize}kB)
                 </a>
                 `
             :   ` 
                 <a class="block--raport--files--toggled" id="toggleFiles${fileTogglersIndex}"}>
-                    Pliki do pobrania (${element.files.length})     
+                    Pliki do pobrania (${report.files.length})     
                     <i class="arrow arrow-down"></i>
                 </a>
                 <div class="hidden" id="visibleFiles${fileTogglersIndex}">
@@ -158,20 +156,20 @@ function renderReportsData(data){
                 </div>
                 `;
         
-        element.files.length >= 2 ? fileTogglersIndex++ : null;
+        report.files.length >= 2 ? fileTogglersIndex++ : null;
 
 
-        reportsOutput += 
+        reportsRenderedOutput += 
             `
             <div class="block clear-fix">
                 <div class="block--date-category f-left">
                     <p><b>${dayMonthYear}</b></p>
                     <p><b>${minutesHour}</b></p>
-                    <p>${element.category}</p>
+                    <p>${report.category}</p>
                 </div>
                 <div class="block--raport f-left">
-                    <h2>${element.title}</h2>
-                    <p>${element.description}</p>
+                    <h2>${report.title}</h2>
+                    <p>${report.description}</p>
                     <div class="f-left">
                         <a>Zobacz raport</a>
                     </div>
@@ -184,9 +182,13 @@ function renderReportsData(data){
     });
 
     //  Render raports on page
-    reportsOutput === ""
-    ? list.innerHTML = "Brak wyników spełniających kryteria" 
-    : list.innerHTML = reportsOutput;
+    const reportsList = document.getElementById("reportsList");
+    // reportsRenderedOutput === ""
+    // ? reportsList.innerHTML = "Brak wyników spełniających kryteria" 
+    // : reportsList.innerHTML = reportsRenderedOutput || "Brak wyników spełniających kryteria";
+    console.log(reportsRenderedOutput);
+    
+    reportsList.innerHTML = reportsRenderedOutput || "Brak wyników spełniających kryteria";
 
     //  Add listeners to <a>Pliki do pobrania</a>
     for( let i=0 ; i<fileTogglersIndex ; i++ ){
@@ -199,5 +201,5 @@ function renderReportsData(data){
 }
 
 window.addEventListener("load", fetchData());
-yearsSelector.addEventListener("change", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
-searchButton.addEventListener("click", () => filterByAll(globalData, yearsSelector.value, searchInput.value));
+yearsSelector.addEventListener("change", () => filterReportsByAllConditions( yearsSelector.value, searchInput.value));
+searchButton.addEventListener("click", () => filterReportsByAllConditions( yearsSelector.value, searchInput.value));

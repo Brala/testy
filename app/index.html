@@ -13,19 +13,19 @@
 	<header>
 		<form class="form" id="form" action="...">
 			<fieldset>
-				<select name="years" class="form--years" id="years"></select>
+				<select name="years" class="form--years" id="formYears"></select>
 				<i class="arrow arrow-down"></i>
 			</fieldset>
 			<fieldset class="form--search f-right">
-				<input type="search" class="form--search--input" id="searchInput" placeholder="Podaj nazwę, numer lub datę raportu" name="q" aria-label="Search through reports">
-				<input type="button" class="form--search--button" id="searchButton" value="Wyszukaj"></input>
+				<input type="search" class="form--search--input" id="formSearchInput" placeholder="Podaj nazwę, numer lub datę raportu" name="q" aria-label="Search through reports">
+				<input type="button" class="form--search--button" id="formSearchButton" value="Wyszukaj"></input>
 			</fieldset>
-			<fieldset><div class="form--tags" id="tags"></div></fieldset>
+			<fieldset><div class="form--tags" id="formTags"></div></fieldset>
 		</form>
 	</header>
 
 	<main>
-		<div id="list">Ładowanie...</div>
+		<div id="reportsList">Ładowanie...</div>
 	</main>
 
 	<script type="text/javascript" src="scripts/scripts.min.js"></script>
